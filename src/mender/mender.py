@@ -153,10 +153,13 @@ def main():
         run_version(args)
         return
     setup_log(args)
+    if "func" not in vars(args):
+        parser.print_usage()
+        return
     try:
         args.func(args)
     except Exception as e:
-        parser.print_usage()
+        log.error("mender failed with: {e}")
 
 
 if __name__ == "__main__":
