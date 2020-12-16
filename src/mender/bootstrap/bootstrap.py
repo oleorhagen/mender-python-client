@@ -15,7 +15,7 @@
 import logging as log
 import os
 
-import src.security.key as key
+import mender.security.key as key
 
 
 def now(force_bootstrap=False, private_key_path="tests/data/keys/"):

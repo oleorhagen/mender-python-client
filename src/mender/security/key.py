@@ -14,7 +14,7 @@
 import logging as log
 import os
 
-import src.security.rsa as rsa
+import mender.security.rsa as rsa
 
 
 def generate_key():

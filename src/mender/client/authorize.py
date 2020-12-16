@@ -15,7 +15,7 @@ import json
 import logging as log
 import requests
 
-import src.security.key as key
+import mender.security.key as key
 
 
 def request(server_url, tenant_token, id_data, private_key):

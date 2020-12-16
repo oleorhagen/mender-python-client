@@ -16,7 +16,7 @@ import os
 import logging as log
 import subprocess
 
-from src.scripts.aggregator.aggregator import ScriptKeyValueAggregator
+from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
 def aggregate(path="/usr/share/mender/identity"):

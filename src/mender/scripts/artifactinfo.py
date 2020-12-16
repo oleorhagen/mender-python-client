@@ -1,5 +1,5 @@
 import logging as log
-from src.scripts.aggregator.aggregator import ScriptKeyValueAggregator
+from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
 def get(path="/etc/mender/artifact_info"):

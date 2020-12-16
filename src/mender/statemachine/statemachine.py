@@ -14,17 +14,17 @@
 import logging as log
 import time
 
-import src.bootstrap.bootstrap as bootstrap
-import src.client.authorize as authorize
-import src.client.deployments as deployments
-import src.client.inventory as client_inventory
-import src.config.config as config
-import src.scripts.aggregator.identity as identity
-import src.scripts.aggregator.inventory as inventory
-import src.scripts.artifactinfo as artifactinfo
-import src.scripts.devicetype as devicetype
+import mender.bootstrap.bootstrap as bootstrap
+import mender.client.authorize as authorize
+import mender.client.deployments as deployments
+import mender.client.inventory as client_inventory
+import mender.config.config as config
+import mender.scripts.aggregator.identity as identity
+import mender.scripts.aggregator.inventory as inventory
+import mender.scripts.artifactinfo as artifactinfo
+import mender.scripts.devicetype as devicetype
 
-from src.log.log import DeploymentLogHandler
+from mender.log.log import DeploymentLogHandler
 
 # TODO -- How to construct the context (?)
 class Context(object):

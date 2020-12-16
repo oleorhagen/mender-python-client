@@ -17,9 +17,9 @@ import os
 import os.path as path
 import subprocess
 
-from src.scripts.aggregator.aggregator import ScriptKeyValueAggregator
-import src.scripts.artifactinfo as artifactinfo
-import src.scripts.devicetype as devicetype
+from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
+import mender.scripts.artifactinfo as artifactinfo
+import mender.scripts.devicetype as devicetype
 
 
 def aggregate(

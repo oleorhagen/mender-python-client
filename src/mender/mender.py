@@ -15,8 +15,8 @@ import argparse
 import logging as log
 import logging.handlers
 
-import src.statemachine.statemachine as statemachine
-import src.bootstrap.bootstrap as bootstrap
+import mender.statemachine.statemachine as statemachine
+import mender.bootstrap.bootstrap as bootstrap
 
 
 def run_daemon(args):
