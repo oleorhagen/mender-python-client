@@ -159,7 +159,7 @@ def main():
     try:
         args.func(args)
     except Exception as e:
-        log.error("mender failed with: {e}")
+        log.error(f"mender failed with: {e}")
 
 
 if __name__ == "__main__":
