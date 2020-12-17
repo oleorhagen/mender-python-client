@@ -15,6 +15,7 @@ import base64
 import logging as log
 import os
 
+from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -27,6 +28,7 @@ def generate_key():
     key = rsa.generate_private_key(
         public_exponent=65537,  # https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html
         key_size=RSA_key_length,
+        backend=default_backend(),
     )
     return key
 
