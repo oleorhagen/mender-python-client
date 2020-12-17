@@ -24,19 +24,15 @@ class DeploymentInfo(dict):
 
     """
 
-    def __init__(self, *args, **kw):
-        super(DeploymentInfo, self).__init__(self, *args, **kw)
-        self.__dict__ = self
-
     def verify(self, deployment_json):
         try:
-            deployment_json["id"]
+            self.id = deployment_json["id"]
             deployment_json["artifact"]
-            deployment_json["artifact"]["artifact_name"]
+            self.artifact_name = deployment_json["artifact"]["artifact_name"]
             deployment_json["artifact"]["source"]
-            deployment_json["artifact"]["source"]["uri"]
+            self.artifact_uri = deployment_json["artifact"]["source"]["uri"]
             deployment_json["artifact"]["source"]["expire"]
-            deployment_json["device_types_compatible"]
+            deployment_json["artifact"]["device_types_compatible"]
         except KeyError as ke:
             log.error(
                 f"The key '{ke}' is missing from the deployments/next response JSON"
@@ -44,7 +40,7 @@ class DeploymentInfo(dict):
             raise ke
         except Exception as e:
             log.error(
-                f"Unknown exception {e} trying to parse the deployments/next JSOn response"
+                f"Unknown exception {e} trying to parse the deployments/next JSON response"
             )
             raise e
 
@@ -68,9 +64,12 @@ def request(server_url, JWT, device_type=None, artifact_name=None):
         log.info(f"New update available: {r.text}")
         update_json = r.json()
         try:
-            dd = DeploymentInfo().verify(update_json)
-            return dd
+            deployment_info = DeploymentInfo()
+            deployment_info.verify(update_json)
+            deployment_info.update(update_json)
+            return deployment_info
         except Exception as e:
+            log.error(f"The deployment data received from the server failed to verify with error: {e}")
             return None
     elif r.status_code == 204:
         log.info("No new update available}")
@@ -81,7 +80,7 @@ def request(server_url, JWT, device_type=None, artifact_name=None):
 
 def download(deployment_data, artifact_path="tests/data/artifact.mender"):
     """Download the update artifact to the artifact_path"""
-    update_url = deployment_data.artifact.source.uri
+    update_url = deployment_data.artifact_uri
     response = requests.get(update_url, stream=True)
     with open(artifact_path, "wb") as fh:
         for data in response.iter_content():
