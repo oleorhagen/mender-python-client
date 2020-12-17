@@ -172,7 +172,7 @@ class AuthorizedStateMachine(StateMachine):
     def run(self, context):
         while self.authorized:
             self.idle_machine.run(context)  # Idle returns when an update is ready
-            UpdateStateMachine().run()  # Update machine runs when idle detects an update
+            UpdateStateMachine().run(context)  # Update machine runs when idle detects an update
 
 
 # Should transitions always go through the external state-machine, to verify and
@@ -205,7 +205,7 @@ class SyncUpdate(State):
         )
         if deployment:
             context.deployment = deployment
-            self.context.deployment_log_handler.enable()
+            context.deployment_log_handler.enable()
             return True
         time.sleep(2)
         return False
@@ -240,43 +240,43 @@ class Download(State):
 
 
 class ArtifactInstall(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactInstall state...")
         return ArtifactReboot()
 
 
 class ArtifactInstall(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactInstall state...")
         return ArtifactReboot()
 
 
 class ArtifactReboot(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactReboot state...")
         return ArtifactCommit()
 
 
 class ArtifactCommit(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactCommit state...")
         return ArtifactRollback()
 
 
 class ArtifactRollback(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactRollback state...")
         return ArtifactRollbackReboot()
 
 
 class ArtifactRollbackReboot(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactRollbackReboot state...")
         return ArtifactFailure()
 
 
 class ArtifactFailure(State):
-    def run(self):
+    def run(self, context):
         log.info("Running the ArtifactFailure state...")
         return _UpdateDone()
 
@@ -288,7 +288,7 @@ class _UpdateDone(State):
     def __eq__(self, other):
         return isinstance(other, _UpdateDone)
 
-    def run(self):
+    def run(self, context):
         assert False
 
 
@@ -297,7 +297,7 @@ class UpdateStateMachine(AuthorizedStateMachine):
     def __init__(self):
         self.current_state = Download()
 
-    def run(self):
+    def run(self, context):
         while self.current_state != _UpdateDone():
-            self.current_state = self.current_state.run()
+            self.current_state = self.current_state.run(context)
             time.sleep(1)
