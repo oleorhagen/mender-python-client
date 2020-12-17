@@ -42,11 +42,15 @@ def load(
     except FileNotFoundError:
         log.debug(f"Global configuration file not found: {e}")
         pass
+    except Exception as e:
+        log.error(f"Failed to load the global configuration file with error {e}")
     try:
         with open(local_path, "r") as fh:
             local_conf = json.load(fh)
     except FileNotFoundError as e:
         log.debug(f"Local configuration file not found: {e}")
+    except Exception as e:
+        log.error(f"Failed to load the local configuration file with error {e}")
     if not global_conf and not local_conf:
         raise NoConfigurationFileError
     if global_conf and local_conf:
