@@ -23,6 +23,7 @@ import mender.scripts.aggregator.identity as identity
 import mender.scripts.aggregator.inventory as inventory
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
+import mender.settings.settings as settings
 
 from mender.log.log import DeploymentLogHandler
 
@@ -53,25 +54,24 @@ class State(object):
 class Init(State):
     def run(self, context, force_bootstrap=False):
         log.debug("InitState: run()")
+        context.config = config.Config()
         try:
-            context.config = {}
-            config_file = config.load(
-                local_path="tests/data/configs/local_mender.conf",
-                global_path="tests/data/configs/global_mender.conf",
+            context.config = config.load(
+                local_path=settings.Path().local_conf,
+                global_path=settings.Path().global_conf,
             )
-            context.config = config_file
-            log.info(f"Loaded configuration: {config_file}")
+            log.info(f"Loaded configuration: {context.config}")
         except config.NoConfigurationFileError:
             log.error(
                 "No configuration files found for the device."
                 "Most likely, the device will not be functional."
             )
         identity_data = identity.aggregate(
-            path="tests/data/identity/mender-device-identity"
+            path="/data/mender/identity/mender-device-identity"
         )
         context.identity_data = identity_data
         private_key = bootstrap.now(
-            force_bootstrap=force_bootstrap, private_key_path="tests/data/keys/"
+            force_bootstrap=force_bootstrap, private_key_path=settings.Path().key
         )
         context.private_key = private_key
         log.debug(f"Init set context to: {context}")
@@ -93,7 +93,6 @@ def run():
 
 
 class StateMachine(object):
-
     def __init__(self):
         log.info("Initializing the state-machine")
         self.context = Context()
@@ -131,6 +130,8 @@ class Authorize(State):
         log.info("Authorizing...")
         log.debug(f"Current context: {context}")
         time.sleep(3)
+        import pdb
+        pdb.set_trace()
         return authorize.request(
             context.config.ServerURL,
             context.config.TenantToken,
@@ -172,7 +173,9 @@ class AuthorizedStateMachine(StateMachine):
     def run(self, context):
         while self.authorized:
             self.idle_machine.run(context)  # Idle returns when an update is ready
-            UpdateStateMachine().run(context)  # Update machine runs when idle detects an update
+            UpdateStateMachine().run(
+                context
+            )  # Update machine runs when idle detects an update
 
 
 # Should transitions always go through the external state-machine, to verify and
@@ -186,7 +189,7 @@ class AuthorizedStateMachine(StateMachine):
 class SyncInventory(State):
     def run(self, context):
         log.info("Syncing the inventory...")
-        inventory_data = inventory.aggregate(script_path="./tests/data/inventory/")
+        inventory_data = inventory.aggregate()
         log.debug(f"aggreated inventory data: {inventory_data}")
         client_inventory.request(context.config.ServerURL, context.JWT, inventory_data)
         time.sleep(1)

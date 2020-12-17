@@ -19,20 +19,38 @@ class NoConfigurationFileError(Exception):
     pass
 
 
-class Config(dict):
+class Config(object):
     """A dictionary for storing Mender configuration values"""
 
-    def __init__(self, *args, **kw):
-        super(Config, self).__init__(self, *args, **kw)
-        self.__dict__ = self
+    def __init__(self, global_conf={}, local_conf={}):
+        vals = {**global_conf, **local_conf}
+        self.ServerURL = ""
+        self.RootfsPartA = ""
+        self.RootfsPartB = ""
+        self.TenantToken = ""
+        self.InventoryPollIntervalSeconds = ""
+        self.UpdatePollIntervalSeconds = ""
+        self.RetryPollIntervalSeconds = ""
+        for k, v in vals:
+            if k == "ServerURL":
+                self.ServerURL = v
+            elif k == "RootfsPartA":
+                self.RootfsPartA = v
+            elif k == "RootfsPartB":
+                self.RootfsPartB = v
+            elif k == "TenantToken":
+                self.TenantToken = v
+            elif k == "InventoryPollIntervalSeconds":
+                self.InventoryPollIntervalSeconds = v
+            elif k == "UpdatePollIntervalSeconds":
+                self.UpdatePollIntervalSeconds = v
+            elif k == "RetryPollIntervalSeconds":
+                self.RetryPollIntervalSeconds = v
+            else:
+                log.error(f"The key {k} is not recognized by the Python client")
 
-    # TODO - handle non-existing keys, or explicitly map to all acceptable
-    # values
 
-
-def load(
-    local_path="/etc/mender/mender.conf", global_path="/data/etc/mender/mender.conf"
-):
+def load(local_path="", global_path=""):
     """Read and return the config from the local and global config files"""
     log.info("Loading the configuration files...")
     global_conf = local_conf = None
@@ -40,8 +58,7 @@ def load(
         with open(global_path, "r") as fh:
             global_conf = json.load(fh)
     except FileNotFoundError:
-        log.debug(f"Global configuration file not found: {e}")
-        pass
+        log.debug(f"Global configuration file not found")
     except Exception as e:
         log.error(f"Failed to load the global configuration file with error {e}")
     try:
@@ -53,16 +70,4 @@ def load(
         log.error(f"Failed to load the local configuration file with error {e}")
     if not global_conf and not local_conf:
         raise NoConfigurationFileError
-    if global_conf and local_conf:
-        # Merge the two files, giving precedence to the local configuration
-        b = {**global_conf, **local_conf}
-        c = Config()
-        c.update(b)
-        return c
-    if global_conf:
-        c = Config()
-        c.update(global_conf)
-        return c
-    c = Config()
-    c.update(local_conf)
-    return c
+    return Config(global_conf=global_conf or {}, local_conf=local_conf or {})
