@@ -27,6 +27,16 @@ class Client(object):
         pass
 
     def authorize(self, server_url, id_data, tenant_token, private_key):
+        if not server_url:
+            log.error("ServerURL not provided, unable to authorize")
+            return None
+        if not id_data:
+            log.error("Identity data not provided, unable to authorize")
+            return None
+        if not private_key:
+            log.error("No private key provided, unable to authorize")
+            return None
+
         id_data_json = json.dumps(id_data)
         public_key = key.public_key(private_key)
         body = {

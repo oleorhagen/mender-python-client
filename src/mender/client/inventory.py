@@ -17,17 +17,30 @@ import requests
 
 
 def request(server_url, JWT, inventory_data):
+    if not server_url:
+        log.error("ServerURL not provided, unable to upload the inventory")
+        return None
+    if not JWT:
+        log.error("No JWT not provided, unable to upload the inventory")
+        return None
+    if not inventory_data:
+        log.info("No inventory_data provided")
+        return None
     log.debug(
         f"inventory request: server_url: {server_url}\nJWT: {JWT}\ninventory_data: {inventory_data}"
     )
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
     log.debug(f"inventory headers: {headers}")
-    raw_data = json.dumps([{"name": k, "value": v} for k, v in inventory_data.items()])
-    r = requests.put(
-        server_url + "/api/devices/v1/inventory/device/attributes",
-        headers=headers,
-        data=raw_data,
-    )
+    try:
+        raw_data = json.dumps([{"name": k, "value": v} for k, v in inventory_data.items()])
+        r = requests.put(
+            server_url + "/api/devices/v1/inventory/device/attributes",
+            headers=headers,
+            data=raw_data,
+        )
+    except Exception as e:
+        log.error("Failed to upload the inventory: {e}")
+        return None
     log.debug(f"inventory response: {r}")
     log.error(f"Error {r.reason}. code: {r.status_code}")
     if r.status_code != 200:

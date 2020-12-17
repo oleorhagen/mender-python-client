@@ -130,8 +130,6 @@ class Authorize(State):
         log.info("Authorizing...")
         log.debug(f"Current context: {context}")
         time.sleep(3)
-        import pdb
-        pdb.set_trace()
         return authorize.request(
             context.config.ServerURL,
             context.config.TenantToken,

@@ -46,6 +46,8 @@ class DeploymentInfo(dict):
 
 
 def request(server_url, JWT, device_type=None, artifact_name=None):
+    if not server_url:
+        log.error("ServerURL not provided. Update cannot proceed")
     if not device_type:
         log.error("No device_type found. Update cannot proceed")
         return
