@@ -156,10 +156,9 @@ def main():
     if "func" not in vars(args):
         parser.print_usage()
         return
-    try:
-        args.func(args)
-    except Exception as e:
-        log.error(f"mender failed with: {e}")
+    args.func(args)
+    # except Exception as e:
+    #     log.error(f"mender failed with: {e}")
 
 
 if __name__ == "__main__":

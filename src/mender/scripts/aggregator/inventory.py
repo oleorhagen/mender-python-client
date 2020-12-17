@@ -23,9 +23,9 @@ import mender.scripts.devicetype as devicetype
 
 
 def aggregate(
-    script_path="/usr/share/mender/inventory",
-    device_type_path="tests/data/mender/device_type",
-    artifact_info_path="tests/data/mender/artifact_info",
+    script_path="",
+    device_type_path="",
+    artifact_info_path="",
 ):
     """Runs all the inventory scripts in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""

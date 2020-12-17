@@ -42,22 +42,22 @@ def public_key(private_key):
     return public_key_pem.decode()
 
 
-def store_key(private_key, path="/path/to/rsa_keys"):
-    log.info(f"Storing key to: {path}")
+def store_key(private_key, where=""):
+    log.info(f"Storing key to: {where}")
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
         encryption_algorithm=serialization.NoEncryption(),
     )
-    with open(path + "/id_rsa", "wb") as key_file:
+    with open(where, "wb") as key_file:
         # TODO -- set the permissions proper
-        os.chmod(path, 0o0755)
+        os.chmod(where, 0o0755)
         key_file.write(pem)
 
 
-def load_key(path="/path/to/rsa_keys"):
-    log.info(f"Loading key from: {path}")
-    with open(path, "rb") as key_file:
+def load_key(where=""):
+    log.info(f"Loading key from: {where}")
+    with open(where, "rb") as key_file:
         private_key = serialization.load_pem_private_key(key_file.read(), password=None)
         return private_key
 

@@ -15,6 +15,7 @@ import logging as log
 import os
 
 import mender.security.rsa as rsa
+import mender.settings.settings as settings
 
 
 def generate_key():
@@ -28,14 +29,14 @@ def public_key(private_key):
     return rsa.public_key(private_key)
 
 
-def store_key(private_key, path="/path/to/rsa_keys"):
+def store_key(private_key, path=settings.Path().key):
     log.info(f"Storing key to: {path}")
     rsa.store_key(private_key, path)
 
 
-def load_key(path="/path/to/rsa_keys"):
-    log.info(f"Loading key from: {path}")
-    return rsa.load_key(path)
+def load_key(where=settings.Path().key_path):
+    log.info(f"Loading key from: {where}")
+    return rsa.load_key(where)
 
 
 def sign(private_key, data):

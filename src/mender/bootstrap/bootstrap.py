@@ -16,9 +16,10 @@ import logging as log
 import os
 
 import mender.security.key as key
+import mender.settings.settings as settings
 
 
-def now(force_bootstrap=False, private_key_path="tests/data/keys/"):
+def now(force_bootstrap=False, private_key_path=settings.Path().key):
     log.info("Bootstrapping the device")
     private_key = None
     if not force_bootstrap:
@@ -34,7 +35,7 @@ def now(force_bootstrap=False, private_key_path="tests/data/keys/"):
 def key_already_generated(private_key_path):
     log.debug("Checking if a key already exists for the device")
     try:
-        return key.load_key(private_key_path + "id_rsa")
+        return key.load_key(private_key_path)
     except FileNotFoundError:
         return None
     except Exception as e:
