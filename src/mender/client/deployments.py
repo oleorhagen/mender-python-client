@@ -53,10 +53,11 @@ def request(server_url, JWT, device_type=None, artifact_name=None):
         log.error("No artifact_Name found. Update cannot proceed")
         return
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
+    parameters = {**device_type, **artifact_name}
     r = requests.get(
         server_url + "/api/devices/v1/deployments/device/deployments/next",
         headers=headers,
-        params={"artifact_name": artifact_name, "device_type": device_type},
+        params=parameters,
     )
     log.debug(f"update: request: {r}")
     log.error(f"Error {r.reason}. code: {r.status_code}")
