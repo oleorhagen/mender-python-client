@@ -19,12 +19,18 @@ import subprocess
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
-def aggregate(path="/usr/share/mender/identity"):
+def aggregate(path=""):
     """Runs the identity script in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
     log.info("Aggregating the device identity attributes...")
+    log.debug(f"Aggregating from: {path}")
     identity_data = {}
-    if os.path.isfile(path) and os.access(path, os.X_OK):
-        identity_data = ScriptKeyValueAggregator(path).run()
+    if os.path.isfile(path):
+        if os.access(path, os.X_OK):
+            identity_data = ScriptKeyValueAggregator(path).run()
+        else:
+            log.error("The identity-script at {path} is not accessible")
+    else:
+        log.error(f"{path} not found. No identity can be collected")
     log.debug(f"Aggregated identity data: {identity_data}")
     return identity_data

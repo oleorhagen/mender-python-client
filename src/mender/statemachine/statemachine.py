@@ -66,9 +66,7 @@ class Init(State):
                 "No configuration files found for the device."
                 "Most likely, the device will not be functional."
             )
-        identity_data = identity.aggregate(
-            path="/data/mender/identity/mender-device-identity"
-        )
+        identity_data = identity.aggregate(path=settings.Path().identity_scripts)
         context.identity_data = identity_data
         private_key = bootstrap.now(
             force_bootstrap=force_bootstrap, private_key_path=settings.Path().key
@@ -187,9 +185,14 @@ class AuthorizedStateMachine(StateMachine):
 class SyncInventory(State):
     def run(self, context):
         log.info("Syncing the inventory...")
-        inventory_data = inventory.aggregate()
-        log.debug(f"aggreated inventory data: {inventory_data}")
-        client_inventory.request(context.config.ServerURL, context.JWT, inventory_data)
+        inventory_data = inventory.aggregate(settings.Path().inventory_scripts)
+        if inventory_data:
+            log.debug(f"aggreated inventory data: {inventory_data}")
+            client_inventory.request(
+                context.config.ServerURL, context.JWT, inventory_data
+            )
+        else:
+            log.info("No inventory data found")
         time.sleep(1)
 
 

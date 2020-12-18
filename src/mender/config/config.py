@@ -31,7 +31,7 @@ class Config(object):
         self.InventoryPollIntervalSeconds = ""
         self.UpdatePollIntervalSeconds = ""
         self.RetryPollIntervalSeconds = ""
-        for k, v in vals:
+        for k, v in vals.items():
             if k == "ServerURL":
                 self.ServerURL = v
             elif k == "RootfsPartA":
@@ -58,14 +58,14 @@ def load(local_path="", global_path=""):
         with open(global_path, "r") as fh:
             global_conf = json.load(fh)
     except FileNotFoundError:
-        log.debug(f"Global configuration file not found")
+        log.info(f"Global configuration file not found")
     except Exception as e:
         log.error(f"Failed to load the global configuration file with error {e}")
     try:
         with open(local_path, "r") as fh:
             local_conf = json.load(fh)
     except FileNotFoundError as e:
-        log.debug(f"Local configuration file not found: {e}")
+        log.info(f"Local configuration file not found: {e}")
     except Exception as e:
         log.error(f"Failed to load the local configuration file with error {e}")
     if not global_conf and not local_conf:

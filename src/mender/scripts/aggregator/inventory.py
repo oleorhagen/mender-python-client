@@ -29,6 +29,7 @@ def aggregate(
 ):
     """Runs all the inventory scripts in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
+    log.info("Aggregating inventory data from {script_path}")
     keyvals = {}
     for inventory_script in inventory_scripts(script_path):
         keyvals.update(inventory_script.run())
