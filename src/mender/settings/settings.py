@@ -20,3 +20,5 @@ class Path(object):
 
         self.artifact_info = os.path.join(self.conf, "artifact_info")
         self.device_type = os.path.join(self.data_store, "device_type")
+
+        self.artifact_download = self.data_dir

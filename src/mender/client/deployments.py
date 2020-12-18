@@ -81,10 +81,19 @@ def request(server_url, JWT, device_type=None, artifact_name=None):
         log.error("Error while fetching update")
 
 
-def download(deployment_data, artifact_path="tests/data/artifact.mender"):
+def download(deployment_data, artifact_path=None):
     """Download the update artifact to the artifact_path"""
+    if not artifact_path:
+        log.error("No path provided in which to store the Artifact")
+        return False
     update_url = deployment_data.artifact_uri
-    response = requests.get(update_url, stream=True)
-    with open(artifact_path, "wb") as fh:
-        for data in response.iter_content():
-            fh.write(data)
+    log.info(f"Downloading Artifact: {artifact_path}")
+    try:
+      response = requests.get(update_url, stream=True)
+      with open(artifact_path, "wb") as fh:
+          for data in response.iter_content():
+              fh.write(data)
+    except Exception as e:
+        log.error(f"The Artifact download failed unexpectedly with error: {e}")
+        return False
+    return True

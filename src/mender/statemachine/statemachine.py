@@ -12,6 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
+import os.path
 import time
 
 import mender.bootstrap.bootstrap as bootstrap
@@ -239,8 +240,14 @@ class IdleStateMachine(AuthorizedStateMachine):
 class Download(State):
     def run(self, context):
         log.info("Running the Download state...")
-        deployments.download(context.deployment)
-        return ArtifactInstall()
+        if deployments.download(
+            context.deployment,
+            artifact_path=os.path.join(
+                settings.Path().artifact_download, "artifact.mender"
+            ),
+        ):
+            return ArtifactInstall()
+        return ArtifactFailure()
 
 
 class ArtifactInstall(State):
