@@ -199,8 +199,8 @@ class SyncInventory(State):
 class SyncUpdate(State):
     def run(self, context):
         log.info("Checking for updates...")
-        device_type = devicetype.get("tests/data/mender/device_type")
-        artifact_name = artifactinfo.get("tests/data/mender/artifact_info")
+        device_type = devicetype.get(settings.Path().device_type)
+        artifact_name = artifactinfo.get(settings.Path().artifact_info)
         deployment = deployments.request(
             context.config.ServerURL,
             context.JWT,
