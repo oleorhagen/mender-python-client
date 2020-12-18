@@ -24,6 +24,7 @@ import mender.scripts.aggregator.identity as identity
 import mender.scripts.aggregator.inventory as inventory
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
+import mender.scripts.runner as installscriptrunner
 import mender.settings.settings as settings
 
 from mender.log.log import DeploymentLogHandler
@@ -253,13 +254,9 @@ class Download(State):
 class ArtifactInstall(State):
     def run(self, context):
         log.info("Running the ArtifactInstall state...")
-        return ArtifactReboot()
-
-
-class ArtifactInstall(State):
-    def run(self, context):
-        log.info("Running the ArtifactInstall state...")
-        return ArtifactReboot()
+        if installscriptrunner.run_sub_updater():
+            return ArtifactReboot()
+        return ArtifactFailure()
 
 
 class ArtifactReboot(State):
