@@ -20,6 +20,17 @@ import mender.settings.settings as settings
 
 
 def now(force_bootstrap=False, private_key_path=settings.Path().key):
+    """Bootstrap the device
+
+    This includes loading the key assymetric key, or generating it if it is not
+    present.
+
+    # TODO Should also authorize with the Mender server
+
+    :param force_bootstrap: regenerate the key even if already present
+    :param private_key_path: full path (including the filename) to the pem formatted key
+    :rtype An instance of `RSAPrivateKey`
+    """
     log.info("Bootstrapping the device")
     private_key = None
     if not force_bootstrap:
@@ -33,6 +44,13 @@ def now(force_bootstrap=False, private_key_path=settings.Path().key):
 
 
 def key_already_generated(private_key_path):
+    """Check if a private key already exists in private_key_path
+
+    If the key already exists load and return it
+
+    :param private_key_path: The full path (including the filename) to the key
+    :rtype `None` if not found, `RSAPrivateKey` otherwise
+    """
     log.debug("Checking if a key already exists for the device")
     try:
         return key.load_key(private_key_path)

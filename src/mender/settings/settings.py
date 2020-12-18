@@ -2,6 +2,15 @@ import os.path
 
 
 class Path(object):
+    """Hold all the path configuration for the client
+
+    Usage::
+
+      >>> import mender.settings.settings as settings
+      >>> private_key_location = settings.Path().key
+
+
+    """
     def __init__(self):
         self.conf = "/etc/mender"
         self.data_store = "/var/lib/mender"
