@@ -22,3 +22,5 @@ class Path(object):
         self.device_type = os.path.join(self.data_store, "device_type")
 
         self.artifact_download = self.data_dir
+
+        self.deployment_log = "/data/"

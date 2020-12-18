@@ -1,5 +1,6 @@
 import logging as log
 import logging.handlers
+import mender.settings.settings as settings
 import os
 import os.path
 
@@ -7,7 +8,7 @@ import os.path
 class DeploymentLogHandler(logging.handlers.RotatingFileHandler):
     def __init__(self):
         self.enabled = False
-        self.log_dir = "tests/data/"
+        self.log_dir = settings.Path().deployment_log
         super().__init__(
             filename=os.path.join(self.log_dir, "deployment-uninitialized.log")
         )
