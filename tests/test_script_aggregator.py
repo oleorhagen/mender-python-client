@@ -4,10 +4,10 @@ import os
 import stat
 
 
-import src.scripts.aggregator.aggregator as aggregator
-import src.scripts.aggregator.inventory as inventory
-import src.scripts.artifactinfo as artifactinfo
-import src.scripts.devicetype as devicetype
+import mender.scripts.aggregator.aggregator as aggregator
+import mender.scripts.aggregator.inventory as inventory
+import mender.scripts.artifactinfo as artifactinfo
+import mender.scripts.devicetype as devicetype
 
 
 class TestScriptKeyValueAggregator:
