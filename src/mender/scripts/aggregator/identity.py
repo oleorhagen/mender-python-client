@@ -14,7 +14,6 @@
 
 import os
 import logging as log
-import subprocess
 
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 

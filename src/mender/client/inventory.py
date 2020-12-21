@@ -32,14 +32,16 @@ def request(server_url, JWT, inventory_data):
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
     log.debug(f"inventory headers: {headers}")
     try:
-        raw_data = json.dumps([{"name": k, "value": v} for k, v in inventory_data.items()])
+        raw_data = json.dumps(
+            [{"name": k, "value": v} for k, v in inventory_data.items()]
+        )
         r = requests.put(
             server_url + "/api/devices/v1/inventory/device/attributes",
             headers=headers,
             data=raw_data,
         )
     except Exception as e:
-        log.error("Failed to upload the inventory: {e}")
+        log.error(f"Failed to upload the inventory: {e}")
         return None
     log.debug(f"inventory response: {r}")
     log.error(f"Error {r.reason}. code: {r.status_code}")

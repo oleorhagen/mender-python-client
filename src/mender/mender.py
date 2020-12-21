@@ -13,7 +13,6 @@
 #    limitations under the License.
 import argparse
 import logging as log
-import logging.handlers
 
 import mender.statemachine.statemachine as statemachine
 import mender.bootstrap.bootstrap as bootstrap
@@ -39,24 +38,18 @@ def run_version(args):
 
 
 def setup_log(args):
-    level = ""
-    if args.log_level == "info":
-        level = log.INFO
-    if args.log_level == "debug":
-        level = log.DEBUG
-    if args.log_level == "warning":
-        level = log.WARNING
-    if args.log_level == "error":
-        level = log.ERROR
-    if args.log_level == "critical":
-        level = log.CRITICAL
+    level = {
+        "debug": log.DEBUG,
+        "info": log.INFO,
+        "warning": log.WARNING,
+        "error": log.ERROR,
+        "critical": log.CRITICAL,
+    }.get(args.log_level, "info")
     handlers = []
     handlers.append(log.StreamHandler())
     # TODO - setup this for the device, see:
     # https://docs.python.org/3/library/logging.handlers.html#sysloghandler
-    sl = log.handlers.SysLogHandler()
-    if args.no_syslog:
-        sl = log.NullHandler()
+    sl = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
     handlers.append(sl)
     if args.log_file:
         handlers.append(log.FileHandler(args.log_file))
@@ -157,8 +150,6 @@ def main():
         parser.print_usage()
         return
     args.func(args)
-    # except Exception as e:
-    #     log.error(f"mender failed with: {e}")
 
 
 if __name__ == "__main__":

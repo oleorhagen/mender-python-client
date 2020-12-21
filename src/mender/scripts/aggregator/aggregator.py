@@ -12,11 +12,10 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
-import os
 import subprocess
 
 
-class ScriptKeyValueAggregator(object):
+class ScriptKeyValueAggregator:
     """Handles the parsing of the output from any Mender identity of inventory scripts.
 
     These scripts support key=value pairs, with one output per line maximum.

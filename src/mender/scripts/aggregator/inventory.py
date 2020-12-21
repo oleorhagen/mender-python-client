@@ -15,18 +15,13 @@
 import logging as log
 import os
 import os.path as path
-import subprocess
 
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
 
 
-def aggregate(
-    script_path="",
-    device_type_path="",
-    artifact_info_path="",
-):
+def aggregate(script_path="", device_type_path="", artifact_info_path=""):
     """Runs all the inventory scripts in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
     log.info("Aggregating inventory data from {script_path}")

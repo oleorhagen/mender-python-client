@@ -19,50 +19,42 @@ import mender.security.key as key
 
 
 def request(server_url, tenant_token, id_data, private_key):
-    return Client().authorize(server_url, id_data, tenant_token, private_key)
+    return authorize(server_url, id_data, tenant_token, private_key)
 
 
-class Client(object):
-    def __init__(self):
-        pass
+def authorize(server_url, id_data, tenant_token, private_key):
+    if not server_url:
+        log.error("ServerURL not provided, unable to authorize")
+        return None
+    if not id_data:
+        log.error("Identity data not provided, unable to authorize")
+        return None
+    if not private_key:
+        log.error("No private key provided, unable to authorize")
+        return None
 
-    def authorize(self, server_url, id_data, tenant_token, private_key):
-        if not server_url:
-            log.error("ServerURL not provided, unable to authorize")
-            return None
-        if not id_data:
-            log.error("Identity data not provided, unable to authorize")
-            return None
-        if not private_key:
-            log.error("No private key provided, unable to authorize")
-            return None
-
-        id_data_json = json.dumps(id_data)
-        public_key = key.public_key(private_key)
-        body = {
-            "id_data": id_data_json,
-            "pubkey": public_key,
-            "tenant_token": tenant_token,
-        }
-        raw_data = json.dumps(body)
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-MEN-Signature": key.sign(private_key, raw_data),
-            "Authorization": "API_KEY",
-        }
-        r = requests.post(
-            server_url + "/api/devices/v1/authentication/auth_requests",
-            data=raw_data,
-            headers=headers,
-        )
-        log.debug(f"response: {r.status_code}")
-        if r.status_code == 200:
-            log.info("The client successfully authenticated with the Mender server")
-            JWT = r.text
-            return JWT
-        else:
-            log.error("The client failed to authorize with the Mender server.")
-            log.error(f"Error {r.reason}. code: {r.status_code}")
-            log.error(f"json: {r.json()}")
-            return None
+    id_data_json = json.dumps(id_data)
+    public_key = key.public_key(private_key)
+    body = {"id_data": id_data_json, "pubkey": public_key, "tenant_token": tenant_token}
+    raw_data = json.dumps(body)
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-MEN-Signature": key.sign(private_key, raw_data),
+        "Authorization": "API_KEY",
+    }
+    r = requests.post(
+        server_url + "/api/devices/v1/authentication/auth_requests",
+        data=raw_data,
+        headers=headers,
+    )
+    log.debug(f"response: {r.status_code}")
+    if r.status_code == 200:
+        log.info("The client successfully authenticated with the Mender server")
+        JWT = r.text
+        return JWT
+    else:
+        log.error("The client failed to authorize with the Mender server.")
+        log.error(f"Error {r.reason}. code: {r.status_code}")
+        log.error(f"json: {r.json()}")
+        return None

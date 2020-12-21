@@ -19,18 +19,19 @@ class NoConfigurationFileError(Exception):
     pass
 
 
-class Config(object):
+class Config:
     """A dictionary for storing Mender configuration values"""
+
+    ServerURL = ""
+    RootfsPartA = ""
+    RootfsPartB = ""
+    TenantToken = ""
+    InventoryPollIntervalSeconds = ""
+    UpdatePollIntervalSeconds = ""
+    RetryPollIntervalSeconds = ""
 
     def __init__(self, global_conf={}, local_conf={}):
         vals = {**global_conf, **local_conf}
-        self.ServerURL = ""
-        self.RootfsPartA = ""
-        self.RootfsPartB = ""
-        self.TenantToken = ""
-        self.InventoryPollIntervalSeconds = ""
-        self.UpdatePollIntervalSeconds = ""
-        self.RetryPollIntervalSeconds = ""
         for k, v in vals.items():
             if k == "ServerURL":
                 self.ServerURL = v
@@ -58,7 +59,7 @@ def load(local_path="", global_path=""):
         with open(global_path, "r") as fh:
             global_conf = json.load(fh)
     except FileNotFoundError:
-        log.info(f"Global configuration file not found")
+        log.info("Global configuration file not found")
     except Exception as e:
         log.error(f"Failed to load the global configuration file with error {e}")
     try:

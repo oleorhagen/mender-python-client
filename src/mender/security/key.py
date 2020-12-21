@@ -12,7 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
-import os
 
 import mender.security.rsa as rsa
 import mender.settings.settings as settings

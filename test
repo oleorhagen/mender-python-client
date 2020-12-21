@@ -1,1 +1,0 @@
-python -B -m pytest -s --verbose src

@@ -13,7 +13,6 @@
 #    limitations under the License.
 import requests
 import logging as log
-import json
 
 
 class DeploymentInfo(dict):
@@ -27,9 +26,7 @@ class DeploymentInfo(dict):
     def verify(self, deployment_json):
         try:
             self.id = deployment_json["id"]
-            deployment_json["artifact"]
             self.artifact_name = deployment_json["artifact"]["artifact_name"]
-            deployment_json["artifact"]["source"]
             self.artifact_uri = deployment_json["artifact"]["source"]["uri"]
             deployment_json["artifact"]["source"]["expire"]
             deployment_json["artifact"]["device_types_compatible"]
@@ -72,7 +69,9 @@ def request(server_url, JWT, device_type=None, artifact_name=None):
             deployment_info.update(update_json)
             return deployment_info
         except Exception as e:
-            log.error(f"The deployment data received from the server failed to verify with error: {e}")
+            log.error(
+                f"The deployment data received from the server failed to verify with error: {e}"
+            )
             return None
     elif r.status_code == 204:
         log.info("No new update available}")
@@ -89,10 +88,10 @@ def download(deployment_data, artifact_path=None):
     update_url = deployment_data.artifact_uri
     log.info(f"Downloading Artifact: {artifact_path}")
     try:
-      response = requests.get(update_url, stream=True)
-      with open(artifact_path, "wb") as fh:
-          for data in response.iter_content():
-              fh.write(data)
+        response = requests.get(update_url, stream=True)
+        with open(artifact_path, "wb") as fh:
+            for data in response.iter_content():
+                fh.write(data)
     except Exception as e:
         log.error(f"The Artifact download failed unexpectedly with error: {e}")
         return False

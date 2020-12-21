@@ -13,7 +13,6 @@
 #    limitations under the License.
 
 import logging as log
-import os
 
 import mender.security.key as key
 import mender.settings.settings as settings

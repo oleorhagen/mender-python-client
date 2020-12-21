@@ -30,14 +30,14 @@ import mender.settings.settings as settings
 from mender.log.log import DeploymentLogHandler
 
 # TODO -- How to construct the context (?)
-class Context(object):
+class Context:
     """Class for storing the state-machine context"""
 
     def __init__(self):
         self.private_key = None
 
 
-class State(object):
+class State:
     def __init__(self):
         pass
 
@@ -92,7 +92,7 @@ def run():
     StateMachine().run()
 
 
-class StateMachine(object):
+class StateMachine:
     def __init__(self):
         log.info("Initializing the state-machine")
         self.context = Context()
@@ -111,11 +111,10 @@ class StateMachine(object):
             self.context.deployment_log_handler.enable()
             # TODO - Handle the state-machine during an active deployment
             raise Exception("Unimplemented - active_deployment_handling")
-        else:
-            self.context.deployment_log_handler.disable()
-            while True:
-                self.unauthorized_machine.run(self.context)
-                self.authorized_machine.run(self.context)
+        self.context.deployment_log_handler.disable()
+        while True:
+            self.unauthorized_machine.run(self.context)
+            self.authorized_machine.run(self.context)
 
 
 #

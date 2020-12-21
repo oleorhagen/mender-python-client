@@ -11,6 +11,16 @@ include:
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-python3-format.yml'
 
+test:runtime:
+    stage: test
+    image: ubuntu
+    before_script:
+        - mkdir -p /var/lib/mender/inventory
+        - mkdir -p /etc/mender
+        - cp support/* /var/lib/mender/inventory/
+        - pip install .
+    script:
+        - mender bootstrap
 
 test:unit:
     stage: test
@@ -19,3 +29,4 @@ test:unit:
         - pip install -r requirements.txt
     script:
         - python -m pytest -s tests
+https://docs.google.com/document/d/1wqMJqN0tQ5mzTDEX9cVQWjhX2W6Gdo_eIbJqSzNiGIg/edit?skip_itp2_check=true#
