@@ -48,7 +48,9 @@ def now(
     return private_key
 
 
-def key_already_generated(private_key_path: str) -> Optional[RSAPrivateKeyWithSerialization]:
+def key_already_generated(
+    private_key_path: str
+) -> Optional[RSAPrivateKeyWithSerialization]:
     """Check if a private key already exists in private_key_path
 
     If the key already exists load and return it

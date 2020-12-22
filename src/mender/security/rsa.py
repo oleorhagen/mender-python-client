@@ -25,6 +25,7 @@ from cryptography.hazmat.primitives.asymmetric.rsa import (
     RSAPrivateKeyWithSerialization,
     RSAPublicKey,
 )
+from cryptography.hazmat.backends import default_backend
 
 RSA_key_length = 3072
 
@@ -63,7 +64,9 @@ def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
 def load_key(where: str) -> RSAPrivateKeyWithSerialization:
     log.info(f"Loading key from: {where}")
     with open(where, "rb") as key_file:
-        private_key = serialization.load_pem_private_key(key_file.read(), password=None)
+        private_key = serialization.load_pem_private_key(
+            key_file.read(), password=None, backend=default_backend()
+        )
         return private_key
 
 

@@ -16,7 +16,7 @@ from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 from typing import Optional
 
 
-def get(path:str) -> Optional[dict]:
+def get(path: str) -> Optional[dict]:
     try:
         artifact_info = ScriptKeyValueAggregator(path).collect(unique_keys=True)
         return artifact_info
