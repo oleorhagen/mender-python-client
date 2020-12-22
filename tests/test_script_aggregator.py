@@ -30,13 +30,13 @@ class TestScriptKeyValueAggregator:
             {"key": ["value", "value2"], "key2": ["value2"]},
         ),
         ("key=value key=value", {}),
-        ("key=value\nkey=val2\nkey=value", {"key": ["value", "val2"]}),
+        ("key=value\nkey=val2\nkey=value", {"key": ["value", "val2", "value"]}),
         ("key=val\tkey=val2", {}),
     ]
 
     @pytest.mark.parametrize("data, expected", TEST_DATA)
     def test_parse_key_values(self, data, expected):
-        vals = aggregator.ScriptKeyValueAggregator().parse(data)
+        vals = aggregator.ScriptKeyValueAggregator("foo").parse(data)
         assert vals == expected
 
 

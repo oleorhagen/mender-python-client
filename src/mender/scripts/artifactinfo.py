@@ -12,8 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
-from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 from typing import Optional
+
+from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
 def get(path: str) -> Optional[dict]:
@@ -22,7 +23,4 @@ def get(path: str) -> Optional[dict]:
         return artifact_info
     except FileNotFoundError:
         log.error("No artifact_info file found in {path}")
-        return None
-    except Exception as e:
-        log.error(f"Error: {e}")
         return None

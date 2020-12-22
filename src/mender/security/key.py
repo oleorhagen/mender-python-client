@@ -15,10 +15,7 @@ import logging as log
 
 import mender.security.rsa as rsa
 import mender.settings.settings as settings
-from cryptography.hazmat.primitives.asymmetric.rsa import (
-    RSAPrivateKeyWithSerialization,
-    RSAPublicKey,
-)
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 
 def generate_key() -> RSAPrivateKeyWithSerialization:

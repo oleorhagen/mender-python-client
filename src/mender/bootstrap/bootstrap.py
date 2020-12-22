@@ -19,7 +19,7 @@ import mender.security.key as key
 import mender.settings.settings as settings
 
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
-from typing import Optional
+from cryptography.exceptions import UnsupportedAlgorithm
 
 
 def now(
@@ -63,6 +63,8 @@ def key_already_generated(
         return key.load_key(private_key_path)
     except FileNotFoundError:
         return None
-    except Exception as e:
-        log.error(e)
+    except (ValueError, TypeError):
+        log.error(f"Failed to decode the file: {private_key_path}")
+    except UnsupportedAlgorithm:
+        log.error(f"Unsupported key type")
     return None

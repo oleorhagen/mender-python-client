@@ -31,16 +31,22 @@ def request(server_url: str, JWT: str, inventory_data: dict) -> None:
     )
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
     log.debug(f"inventory headers: {headers}")
+    raw_data = json.dumps(
+        [{"name": k, "value": v} for k, v in inventory_data.items()]
+    )
     try:
-        raw_data = json.dumps(
-            [{"name": k, "value": v} for k, v in inventory_data.items()]
-        )
         r = requests.put(
             server_url + "/api/devices/v1/inventory/device/attributes",
             headers=headers,
             data=raw_data,
         )
-    except Exception as e:
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as e:
         log.error(f"Failed to upload the inventory: {e}")
         return None
     log.debug(f"inventory response: {r}")

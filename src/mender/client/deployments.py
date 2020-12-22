@@ -12,11 +12,13 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
-import requests
 from typing import Optional
+import requests
+
+from mender.client import HTTPUnathorized
 
 
-class DeploymentInfo(dict):
+class DeploymentInfo:
     """Class which holds all the information related to a deployment.
 
     The information is extracted from the json response from the server, and is
@@ -24,23 +26,15 @@ class DeploymentInfo(dict):
 
     """
 
-    def verify(self, deployment_json: dict) -> None:
+    def __init__(self, deployment_json: dict) -> None:
         try:
-            self.id = deployment_json["id"]
+            self.ID = deployment_json["id"]
             self.artifact_name = deployment_json["artifact"]["artifact_name"]
             self.artifact_uri = deployment_json["artifact"]["source"]["uri"]
-            deployment_json["artifact"]["source"]["expire"]
-            deployment_json["artifact"]["device_types_compatible"]
         except KeyError as ke:
             log.error(
                 f"The key '{ke}' is missing from the deployments/next response JSON"
             )
-            raise ke
-        except Exception as e:
-            log.error(
-                f"Unknown exception {e} trying to parse the deployments/next JSON response"
-            )
-            raise e
 
 
 def request(
@@ -67,25 +61,20 @@ def request(
     )
     log.debug(f"update: request: {r}")
     log.error(f"Error {r.reason}. code: {r.status_code}")
+    deployment_info = None
     if r.status_code == 200:
         log.info(f"New update available: {r.text}")
         update_json = r.json()
-        try:
-            deployment_info = DeploymentInfo()
-            deployment_info.verify(update_json)
-            deployment_info.update(update_json)
-            return deployment_info
-        except Exception as e:
-            log.error(
-                f"The deployment data received from the server failed to verify with error: {e}"
-            )
-            return None
+        deployment_info = DeploymentInfo(update_json)
     elif r.status_code == 204:
         log.info("No new update available}")
+    elif r.status_code == 401:
+        log.info(f"The client seems to have been unathorized {r}")
+        raise HTTPUnathorized()
     else:
         log.debug(f"{r.json()}")
         log.error("Error while fetching update")
-    return None
+    return deployment_info
 
 
 def download(deployment_data: DeploymentInfo, artifact_path: str) -> bool:
@@ -100,7 +89,13 @@ def download(deployment_data: DeploymentInfo, artifact_path: str) -> bool:
         with open(artifact_path, "wb") as fh:
             for data in response.iter_content():
                 fh.write(data)
-    except Exception as e:
-        log.error(f"The Artifact download failed unexpectedly with error: {e}")
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as e:
+        log.error(e)
         return False
     return True

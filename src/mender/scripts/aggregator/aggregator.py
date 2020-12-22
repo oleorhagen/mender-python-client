@@ -31,7 +31,8 @@ class ScriptKeyValueAggregator:
         output = subprocess.run(self.script_path, stdout=subprocess.PIPE, timeout=100)
         if output.returncode != 0:
             log.error(
-                f"Failed to aggregate key-value pairs from {self.script_path}. Script returned: {output.returncode}, stderr: {output.stderr.decode()}"
+                f"Failed to aggregate key-value pairs from {self.script_path}.\
+                Script returned: {output.returncode}, stderr: {output.stderr.decode()}"
             )
             return {}
         data = output.stdout.decode()
@@ -52,7 +53,8 @@ class ScriptKeyValueAggregator:
                 continue
             if len(arr) > 2:
                 log.error(
-                    f"script: {self.script_path} output line: {line} is improperly formatted with more than one '=' sign. Skipping."
+                    f"script: {self.script_path} output line: {line}\
+                    is improperly formatted with more than one '=' sign. Skipping."
                 )
                 continue
             key, val = arr[0], arr[1]

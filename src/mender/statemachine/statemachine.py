@@ -16,6 +16,7 @@ import os.path
 import time
 
 import mender.bootstrap.bootstrap as bootstrap
+from mender.client  import HTTPUnathorized
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
@@ -29,7 +30,6 @@ import mender.settings.settings as settings
 
 from mender.log.log import DeploymentLogHandler
 
-# TODO -- How to construct the context (?)
 class Context:
     """Class for storing the state-machine context"""
 
@@ -41,15 +41,7 @@ class State:
     def __init__(self):
         pass
 
-    # TODO -- needed or not (?)
-    def pre(self):
-        pass
-
-    # TODO -- needed or not (?)
-    def post(self):
-        pass
-
-    def run(self):
+    def run(self, context):
         pass
 
 
@@ -76,7 +68,7 @@ class Init(State):
         context.private_key = private_key
         log.debug(f"Init set context to: {context}")
         #
-        # TODO - We need some way of knowing whether or not a deployment was in
+        # We need some way of knowing whether or not a deployment was in
         # progress, and what the last state was, so that the deployment can be
         # resumed, and so that we can start the state-machine on the passive
         # partition, whenever needed. For now though, this is always False.
@@ -96,9 +88,11 @@ class StateMachine:
     def __init__(self):
         log.info("Initializing the state-machine")
         self.context = Context()
+        self.context.authorized = False
         log.info(f"ctx: {self.context}")
         self.unauthorized_machine = UnauthorizedStateMachine()
         self.authorized_machine = AuthorizedStateMachine()
+        log.info("Finished setting up the state-machine")
 
     def run(self, force_bootstrap=False):
         self.context = Init().run(self.context, force_bootstrap)
@@ -109,7 +103,6 @@ class StateMachine:
         self.context.deployment_log_handler = deployment_log_handler
         if self.context.deployment_active:
             self.context.deployment_log_handler.enable()
-            # TODO - Handle the state-machine during an active deployment
             raise Exception("Unimplemented - active_deployment_handling")
         self.context.deployment_log_handler.disable()
         while True:
@@ -155,6 +148,7 @@ class UnauthorizedStateMachine(StateMachine):
             JWT = Authorize().run(context)
             if JWT:
                 context.JWT = JWT
+                context.authorized = True
                 return
             Idle().run(context)
 
@@ -163,16 +157,19 @@ class AuthorizedStateMachine(StateMachine):
     """Handle Inventory update, and update check"""
 
     def __init__(self):
-        self.authorized = True  # TODO -- Set this to 'False'
         self.idle_machine = IdleStateMachine()
         self.update_machine = UpdateStateMachine()
 
     def run(self, context):
-        while self.authorized:
-            self.idle_machine.run(context)  # Idle returns when an update is ready
-            UpdateStateMachine().run(
-                context
-            )  # Update machine runs when idle detects an update
+        while context.authorized:
+            try:
+                self.idle_machine.run(context)  # Idle returns when an update is ready
+                UpdateStateMachine().run(
+                    context
+                )  # Update machine runs when idle detects an update
+            except HTTPUnathorized:
+                context.authorized = False
+                return
 
 
 # Should transitions always go through the external state-machine, to verify and
@@ -225,7 +222,7 @@ class IdleStateMachine(AuthorizedStateMachine):
         pass
 
     def run(self, context):
-        while True:
+        while context.authorized:
             SyncInventory().run(context)
             if SyncUpdate().run(context):
                 # Update available
@@ -235,11 +232,6 @@ class IdleStateMachine(AuthorizedStateMachine):
 #
 # Updating - Run the update state-machine
 #
-
-# TODO -- should it have a separate state-machine for the 'dirty' partition ?
-
-# This will be the most advanced setup, by far !
-
 
 class Download(State):
     def run(self, context):

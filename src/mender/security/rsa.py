@@ -21,27 +21,21 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-from cryptography.hazmat.primitives.asymmetric.rsa import (
-    RSAPrivateKeyWithSerialization,
-    RSAPublicKey,
-)
-from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 RSA_key_length = 3072
 
 
 def generate_key() -> RSAPrivateKeyWithSerialization:
     key = rsa.generate_private_key(
-        public_exponent=65537,  # https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html
-        key_size=RSA_key_length,
-        backend=default_backend(),
+        public_exponent=65537, key_size=RSA_key_length, backend=default_backend()
     )
     return key
 
 
 def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
-    public_key = private_key.public_key()
-    public_key_pem = public_key.public_bytes(
+    _public_key = private_key.public_key()
+    public_key_pem = _public_key.public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
@@ -56,8 +50,7 @@ def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
         encryption_algorithm=serialization.NoEncryption(),
     )
     with open(where, "wb") as key_file:
-        # TODO -- set the permissions proper
-        os.chmod(where, 0o0755)
+        os.chmod(where, 0o0600)
         key_file.write(pem)
 
 

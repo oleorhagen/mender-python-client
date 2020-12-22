@@ -15,11 +15,11 @@
 import logging as log
 import os
 import os.path as path
+from typing import List
 
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
-from typing import List
 
 
 def aggregate(script_path: str, device_type_path: str, artifact_info_path: str) -> dict:

@@ -20,7 +20,6 @@ import mender.bootstrap.bootstrap as bootstrap
 
 def run_daemon(args):
     log.info("Running daemon...")
-    log.info(f"Force bootstrap {args.forcebootstrap}")
     statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
 
 

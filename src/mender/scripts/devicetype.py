@@ -12,9 +12,9 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
+from typing import Optional
 
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
-from typing import Optional
 
 
 def get(path: str) -> Optional[dict]:
@@ -28,7 +28,4 @@ def get(path: str) -> Optional[dict]:
         return device_type
     except FileNotFoundError:
         log.error(f"No device_type file found in {path}")
-        return None
-    except Exception as e:
-        log.error(f"Error: {e}")
         return None

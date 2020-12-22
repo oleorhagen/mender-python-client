@@ -13,9 +13,10 @@
 #    limitations under the License.
 import logging as log
 import logging.handlers
-import mender.settings.settings as settings
 import os
 import os.path
+
+import mender.settings.settings as settings
 
 
 class DeploymentLogHandler(logging.handlers.RotatingFileHandler):
@@ -45,7 +46,6 @@ class DeploymentLogHandler(logging.handlers.RotatingFileHandler):
                 log.info(f"Sub-updater-logs follows:\n{log_string}")
         except FileNotFoundError:
             log.error(
-                f"The log_file: {log_file} was not found. No logs from the sub-updater will be reported."
+                f"The log_file: {log_file} was not found.\
+                No logs from the sub-updater will be reported."
             )
-        except Exception as e:
-            log.error(f"Unexpected exception {e}")

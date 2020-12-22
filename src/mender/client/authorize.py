@@ -13,13 +13,14 @@
 #    limitations under the License.
 import json
 import logging as log
-import requests
 from typing import Optional
+import requests
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
-JWT = str
-
 import mender.security.key as key
+
+JWTToken = str
+
 
 
 def request(
@@ -27,7 +28,7 @@ def request(
     tenant_token: str,
     id_data: dict,
     private_key: RSAPrivateKeyWithSerialization,
-) -> Optional[JWT]:
+) -> Optional[JWTToken]:
     return authorize(server_url, id_data, tenant_token, private_key)
 
 
@@ -36,7 +37,7 @@ def authorize(
     id_data: dict,
     tenant_token: str,
     private_key: RSAPrivateKeyWithSerialization,
-) -> Optional[JWT]:
+) -> Optional[JWTToken]:
     if not server_url:
         log.error("ServerURL not provided, unable to authorize")
         return None
@@ -57,18 +58,27 @@ def authorize(
         "X-MEN-Signature": key.sign(private_key, raw_data),
         "Authorization": "API_KEY",
     }
-    r = requests.post(
-        server_url + "/api/devices/v1/authentication/auth_requests",
-        data=raw_data,
-        headers=headers,
-    )
+    try:
+        r = requests.post(
+            server_url + "/api/devices/v1/authentication/auth_requests",
+            data=raw_data,
+            headers=headers,
+        )
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as e:
+        log.error("Failed to post to the authentication endpoint")
+        log.error(e)
+        return None
     log.debug(f"response: {r.status_code}")
     if r.status_code == 200:
         log.info("The client successfully authenticated with the Mender server")
-        JWT = r.text
-        return JWT
-    else:
-        log.error("The client failed to authorize with the Mender server.")
-        log.error(f"Error {r.reason}. code: {r.status_code}")
-        log.error(f"json: {r.json()}")
-        return None
+        return r.text
+    log.error("The client failed to authorize with the Mender server.")
+    log.error(f"Error {r.reason}. code: {r.status_code}")
+    log.error(f"json: {r.json()}")
+    return None
