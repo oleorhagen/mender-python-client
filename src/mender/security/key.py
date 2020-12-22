@@ -15,29 +15,35 @@ import logging as log
 
 import mender.security.rsa as rsa
 import mender.settings.settings as settings
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateKeyWithSerialization,
+    RSAPublicKey,
+)
 
 
-def generate_key():
+def generate_key() -> RSAPrivateKeyWithSerialization:
     log.debug("generate_key: ")
     private_key = rsa.generate_key()
     return private_key
 
 
-def public_key(private_key):
+def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
     log.debug("key: public_key()")
     return rsa.public_key(private_key)
 
 
-def store_key(private_key, path=settings.Path().key):
+def store_key(
+    private_key: RSAPrivateKeyWithSerialization, path: str = settings.Path().key
+):
     log.info(f"Storing key to: {path}")
     rsa.store_key(private_key, path)
 
 
-def load_key(where=settings.Path().key_path):
+def load_key(where: str = settings.Path().key_path) -> RSAPrivateKeyWithSerialization:
     log.info(f"Loading key from: {where}")
     return rsa.load_key(where)
 
 
-def sign(private_key, data):
+def sign(private_key: RSAPrivateKeyWithSerialization, data: str) -> str:
     log.debug("key: Signing the message body")
     return rsa.sign(private_key, data)

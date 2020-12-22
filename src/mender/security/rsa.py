@@ -21,10 +21,15 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+from cryptography.hazmat.primitives.asymmetric.rsa import (
+    RSAPrivateKeyWithSerialization,
+    RSAPublicKey,
+)
+
 RSA_key_length = 3072
 
 
-def generate_key():
+def generate_key() -> RSAPrivateKeyWithSerialization:
     key = rsa.generate_private_key(
         public_exponent=65537,  # https://www.daemonology.net/blog/2009-06-11-cryptographic-right-answers.html
         key_size=RSA_key_length,
@@ -33,7 +38,7 @@ def generate_key():
     return key
 
 
-def public_key(private_key):
+def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
     public_key = private_key.public_key()
     public_key_pem = public_key.public_bytes(
         encoding=serialization.Encoding.PEM,
@@ -42,7 +47,7 @@ def public_key(private_key):
     return public_key_pem.decode()
 
 
-def store_key(private_key, where=""):
+def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
     log.info(f"Storing key to: {where}")
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
@@ -55,14 +60,14 @@ def store_key(private_key, where=""):
         key_file.write(pem)
 
 
-def load_key(where=""):
+def load_key(where: str) -> RSAPrivateKeyWithSerialization:
     log.info(f"Loading key from: {where}")
     with open(where, "rb") as key_file:
         private_key = serialization.load_pem_private_key(key_file.read(), password=None)
         return private_key
 
 
-def sign(private_key, data):
+def sign(private_key: RSAPrivateKeyWithSerialization, data: str) -> str:
     signature = private_key.sign(
         data=bytes(data, "utf-8"), padding=padding.PKCS1v15(), algorithm=hashes.SHA256()
     )

@@ -13,9 +13,10 @@
 #    limitations under the License.
 import logging as log
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
+from typing import Optional
 
 
-def get(path="/etc/mender/artifact_info"):
+def get(path:str) -> Optional[dict]:
     try:
         artifact_info = ScriptKeyValueAggregator(path).collect(unique_keys=True)
         return artifact_info
@@ -24,3 +25,4 @@ def get(path="/etc/mender/artifact_info"):
         return None
     except Exception as e:
         log.error(f"Error: {e}")
+        return None

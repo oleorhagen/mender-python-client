@@ -14,15 +14,29 @@
 import json
 import logging as log
 import requests
+from typing import Optional
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
+
+JWT = str
 
 import mender.security.key as key
 
 
-def request(server_url, tenant_token, id_data, private_key):
+def request(
+    server_url: str,
+    tenant_token: str,
+    id_data: dict,
+    private_key: RSAPrivateKeyWithSerialization,
+) -> Optional[JWT]:
     return authorize(server_url, id_data, tenant_token, private_key)
 
 
-def authorize(server_url, id_data, tenant_token, private_key):
+def authorize(
+    server_url: str,
+    id_data: dict,
+    tenant_token: str,
+    private_key: RSAPrivateKeyWithSerialization,
+) -> Optional[JWT]:
     if not server_url:
         log.error("ServerURL not provided, unable to authorize")
         return None

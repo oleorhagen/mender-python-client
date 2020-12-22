@@ -13,12 +13,18 @@
 #    limitations under the License.
 
 import logging as log
+from typing import Optional
 
 import mender.security.key as key
 import mender.settings.settings as settings
 
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
+from typing import Optional
 
-def now(force_bootstrap=False, private_key_path=settings.Path().key):
+
+def now(
+    force_bootstrap: bool = False, private_key_path: str = settings.Path().key
+) -> Optional[RSAPrivateKeyWithSerialization]:
     """Bootstrap the device
 
     This includes loading the key assymetric key, or generating it if it is not
@@ -31,7 +37,7 @@ def now(force_bootstrap=False, private_key_path=settings.Path().key):
     :rtype An instance of `RSAPrivateKey`
     """
     log.info("Bootstrapping the device")
-    private_key = None
+    private_key: Optional[RSAPrivateKeyWithSerialization] = None
     if not force_bootstrap:
         private_key = key_already_generated(private_key_path)
     if not private_key:
@@ -42,7 +48,7 @@ def now(force_bootstrap=False, private_key_path=settings.Path().key):
     return private_key
 
 
-def key_already_generated(private_key_path):
+def key_already_generated(private_key_path: str) -> Optional[RSAPrivateKeyWithSerialization]:
     """Check if a private key already exists in private_key_path
 
     If the key already exists load and return it

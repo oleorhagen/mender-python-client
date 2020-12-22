@@ -13,6 +13,7 @@
 #    limitations under the License.
 import json
 import logging as log
+from typing import Optional
 
 
 class NoConfigurationFileError(Exception):
@@ -30,7 +31,7 @@ class Config:
     UpdatePollIntervalSeconds = ""
     RetryPollIntervalSeconds = ""
 
-    def __init__(self, global_conf={}, local_conf={}):
+    def __init__(self, global_conf: dict = {}, local_conf: dict = {}):
         vals = {**global_conf, **local_conf}
         for k, v in vals.items():
             if k == "ServerURL":
@@ -51,8 +52,8 @@ class Config:
                 log.error(f"The key {k} is not recognized by the Python client")
 
 
-def load(local_path="", global_path=""):
-    """Read and return the config from the local and global config files"""
+def load(local_path: str, global_path: str) -> Optional[Config]:
+    """Read and return the merged configuration from the local and global config files"""
     log.info("Loading the configuration files...")
     global_conf = local_conf = None
     try:

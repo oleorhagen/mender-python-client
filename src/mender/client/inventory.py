@@ -16,7 +16,7 @@ import logging as log
 import requests
 
 
-def request(server_url, JWT, inventory_data):
+def request(server_url: str, JWT: str, inventory_data: dict) -> None:
     if not server_url:
         log.error("ServerURL not provided, unable to upload the inventory")
         return None
@@ -47,3 +47,4 @@ def request(server_url, JWT, inventory_data):
     log.error(f"Error {r.reason}. code: {r.status_code}")
     if r.status_code != 200:
         log.error(f"{r.json()}")
+    return None

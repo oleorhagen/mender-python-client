@@ -14,6 +14,8 @@
 import logging as log
 import subprocess
 
+from typing import Dict, List
+
 
 class ScriptKeyValueAggregator:
     """Handles the parsing of the output from any Mender identity of inventory scripts.
@@ -21,21 +23,26 @@ class ScriptKeyValueAggregator:
     These scripts support key=value pairs, with one output per line maximum.
     Multiple lines with a matching key are aggregated into an array."""
 
-    def __init__(self, script_path="unset"):
+    def __init__(self, script_path: str):
         self.script_path = script_path
-        self.vals = {}
+        self.vals: Dict[str, List[str]] = {}
 
-    def run(self):
+    def run(self) -> dict:
         output = subprocess.run(self.script_path, stdout=subprocess.PIPE, timeout=100)
+        if output.returncode != 0:
+            log.error(
+                f"Failed to aggregate key-value pairs from {self.script_path}. Script returned: {output.returncode}, stderr: {output.stderr.decode()}"
+            )
+            return {}
         data = output.stdout.decode()
         return self.parse(data)
 
-    def collect(self, unique_keys=False):
+    def collect(self, unique_keys: bool = False) -> Dict[str, List[str]]:
         with open(self.script_path) as fh:
             data = fh.read()
             return self.parse(data, unique_keys)
 
-    def parse(self, data, unique_keys=False):
+    def parse(self, data: str, unique_keys: bool = False) -> Dict[str, List[str]]:
         for line in data.split("\n"):
             if line == "":
                 continue
@@ -49,10 +56,8 @@ class ScriptKeyValueAggregator:
                 )
                 continue
             key, val = arr[0], arr[1]
-            l = self.vals.get(key, [])
             if unique_keys:
-                l = [val]
-            elif val not in l:
-                l.append(val)
-            self.vals[key] = l
+                self.vals[key] = [val]
+            else:
+                self.vals.setdefault(key, []).append(val)
         return self.vals

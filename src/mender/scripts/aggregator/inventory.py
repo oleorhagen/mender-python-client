@@ -19,13 +19,14 @@ import os.path as path
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
+from typing import List
 
 
-def aggregate(script_path="", device_type_path="", artifact_info_path=""):
+def aggregate(script_path: str, device_type_path: str, artifact_info_path: str) -> dict:
     """Runs all the inventory scripts in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
     log.info("Aggregating inventory data from {script_path}")
-    keyvals = {}
+    keyvals: dict = {}
     for inventory_script in inventory_scripts(script_path):
         keyvals.update(inventory_script.run())
     dt = devicetype.get(device_type_path)
@@ -39,7 +40,7 @@ def aggregate(script_path="", device_type_path="", artifact_info_path=""):
     return keyvals
 
 
-def inventory_scripts(inventory_dir):
+def inventory_scripts(inventory_dir: str) -> List[ScriptKeyValueAggregator]:
     """Returns all the inventory scripts in a directory.
 
     An inventory scripts needs to:

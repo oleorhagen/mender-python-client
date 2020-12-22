@@ -186,7 +186,11 @@ class AuthorizedStateMachine(StateMachine):
 class SyncInventory(State):
     def run(self, context):
         log.info("Syncing the inventory...")
-        inventory_data = inventory.aggregate(settings.Path().inventory_scripts)
+        inventory_data = inventory.aggregate(
+            settings.Path().inventory_scripts,
+            settings.Path().device_type,
+            settings.Path().artifact_info,
+        )
         if inventory_data:
             log.debug(f"aggreated inventory data: {inventory_data}")
             client_inventory.request(
