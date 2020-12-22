@@ -13,7 +13,7 @@ include:
 
 test:runtime:
     stage: test
-    image: ubuntu
+    image: python:3.6-buster
     before_script:
         - mkdir -p /var/lib/mender/inventory
         - mkdir -p /etc/mender
