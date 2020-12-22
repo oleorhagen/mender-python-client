@@ -22,6 +22,14 @@ test:runtime:
     script:
         - mender bootstrap
 
+test:static:
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - pip install mypy
+    script:
+        - mypy src
+
 test:unit:
     stage: test
     image: python:3.6-buster
@@ -29,4 +37,3 @@ test:unit:
         - pip install -r requirements.txt
     script:
         - python -m pytest -s tests
-https://docs.google.com/document/d/1wqMJqN0tQ5mzTDEX9cVQWjhX2W6Gdo_eIbJqSzNiGIg/edit?skip_itp2_check=true#
