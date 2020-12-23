@@ -31,9 +31,9 @@ class DeploymentInfo:
             self.ID = deployment_json["id"]
             self.artifact_name = deployment_json["artifact"]["artifact_name"]
             self.artifact_uri = deployment_json["artifact"]["source"]["uri"]
-        except KeyError as ke:
+        except KeyError as e:
             log.error(
-                f"The key '{ke}' is missing from the deployments/next response JSON"
+                f"The key '{e}' is missing from the deployments/next response JSON"
             )
 
 

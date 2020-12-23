@@ -23,16 +23,16 @@ def run_daemon(args):
     statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
 
 
-def show_artifact(args):
-    log.info("Showing Artifact:")
+def show_artifact(_):
+    log.info(f"Showing Artifact: ")
 
 
-def run_bootstrap(args):
+def run_bootstrap(_):
     log.info("Bootstrapping...")
     bootstrap.now(force_bootstrap=True)
 
 
-def run_version(args):
+def run_version(_):
     print("version: alpha")
 
 
@@ -48,8 +48,8 @@ def setup_log(args):
     handlers.append(log.StreamHandler())
     # TODO - setup this for the device, see:
     # https://docs.python.org/3/library/logging.handlers.html#sysloghandler
-    sl = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
-    handlers.append(sl)
+    syslogger = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
+    handlers.append(syslogger)
     if args.log_file:
         handlers.append(log.FileHandler(args.log_file))
     log.basicConfig(level=level, handlers=handlers)

@@ -23,12 +23,12 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
-RSA_key_length = 3072
+RSA_KEY_LENGTH = 3072
 
 
 def generate_key() -> RSAPrivateKeyWithSerialization:
     key = rsa.generate_private_key(
-        public_exponent=65537, key_size=RSA_key_length, backend=default_backend()
+        public_exponent=65537, key_size=RSA_KEY_LENGTH, backend=default_backend()
     )
     return key
 

@@ -29,14 +29,14 @@ def aggregate(script_path: str, device_type_path: str, artifact_info_path: str) 
     keyvals: dict = {}
     for inventory_script in inventory_scripts(script_path):
         keyvals.update(inventory_script.run())
-    dt = devicetype.get(device_type_path)
-    log.info(f"Found the device type: {dt}")
-    if dt:
-        keyvals.update(dt)
-    an = artifactinfo.get(artifact_info_path)
-    log.info(f"Found the artifact_name: {an}")
-    if an:
-        keyvals.update(an)
+    device_type = devicetype.get(device_type_path)
+    log.info(f"Found the device type: {device_type}")
+    if device_type:
+        keyvals.update(device_type)
+    artifact_name = artifactinfo.get(artifact_info_path)
+    log.info(f"Found the artifact_name: {artifact_name}")
+    if artifact_name:
+        keyvals.update(artifact_name)
     return keyvals
 
 
@@ -50,7 +50,7 @@ def inventory_scripts(inventory_dir: str) -> List[ScriptKeyValueAggregator]:
     """
     scripts = []
     for f in os.listdir(inventory_dir):
-        fp = path.join(inventory_dir, f)
-        if path.isfile(fp) and os.access(fp, os.X_OK):
-            scripts.append(ScriptKeyValueAggregator(fp))
+        filepath = path.join(inventory_dir, f)
+        if path.isfile(filepath) and os.access(filepath, os.X_OK):
+            scripts.append(ScriptKeyValueAggregator(filepath))
     return scripts

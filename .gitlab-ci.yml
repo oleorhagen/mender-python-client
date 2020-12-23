@@ -34,9 +34,11 @@ test:static:
     stage: test
     image: python:3.6-buster
     before_script:
-        - pip install mypy
+        - pip install --cache-dir=~/.cache/pip-test mypy
+        - pip install --cache-dir=~/.cache/pip-test pylint
     script:
         - mypy src
+        - pylint --rcfile=.pylintrc-develop src
 
 test:unit:
     extends: .test
