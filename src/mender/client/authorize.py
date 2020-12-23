@@ -22,7 +22,6 @@ import mender.security.key as key
 JWTToken = str
 
 
-
 def request(
     server_url: str,
     tenant_token: str,

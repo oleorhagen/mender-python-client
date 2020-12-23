@@ -16,7 +16,7 @@ import os.path
 import time
 
 import mender.bootstrap.bootstrap as bootstrap
-from mender.client  import HTTPUnathorized
+from mender.client import HTTPUnathorized
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
@@ -29,6 +29,7 @@ import mender.scripts.runner as installscriptrunner
 import mender.settings.settings as settings
 
 from mender.log.log import DeploymentLogHandler
+
 
 class Context:
     """Class for storing the state-machine context"""
@@ -232,6 +233,7 @@ class IdleStateMachine(AuthorizedStateMachine):
 #
 # Updating - Run the update state-machine
 #
+
 
 class Download(State):
     def run(self, context):
