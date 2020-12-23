@@ -49,7 +49,7 @@ def now(
 
 
 def key_already_generated(
-    private_key_path: str
+    private_key_path: str,
 ) -> Optional[RSAPrivateKeyWithSerialization]:
     """Check if a private key already exists in private_key_path
 
