@@ -13,9 +13,10 @@
 #    limitations under the License.
 import logging as log
 
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
+
 import mender.security.rsa as rsa
 import mender.settings.settings as settings
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 
 def generate_key() -> RSAPrivateKeyWithSerialization:

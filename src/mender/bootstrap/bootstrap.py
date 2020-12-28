@@ -15,11 +15,11 @@
 import logging as log
 from typing import Optional
 
-import mender.security.key as key
-import mender.settings.settings as settings
-
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 from cryptography.exceptions import UnsupportedAlgorithm
+
+import mender.security.key as key
+import mender.settings.settings as settings
 
 
 def now(
