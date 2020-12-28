@@ -66,5 +66,5 @@ def key_already_generated(
     except (ValueError, TypeError):
         log.error(f"Failed to decode the file: {private_key_path}")
     except UnsupportedAlgorithm:
-        log.error(f"Unsupported key type")
+        log.error("Unsupported key type")
     return None

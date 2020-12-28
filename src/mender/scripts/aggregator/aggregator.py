@@ -28,15 +28,21 @@ class ScriptKeyValueAggregator:
         self.vals: Dict[str, List[str]] = {}
 
     def run(self) -> dict:
-        output = subprocess.run(self.script_path, stdout=subprocess.PIPE, timeout=100)
-        if output.returncode != 0:
-            log.error(
-                f"Failed to aggregate key-value pairs from {self.script_path}.\
-                Script returned: {output.returncode}, stderr: {output.stderr.decode()}"
+        try:
+            output = subprocess.run(
+                self.script_path, stdout=subprocess.PIPE, timeout=100, check=True
             )
-            return {}
-        data = output.stdout.decode()
-        return self.parse(data)
+            data = output.stdout.decode()
+            return self.parse(data)
+        except subprocess.CalledProcessError as e:
+            if e.returncode != 0:
+                log.error(
+                    f"Failed to aggregate key-value pairs from {self.script_path}.\
+                    Script returned: {output.returncode}, stderr: {e.stderr.decode()}"
+                )
+                return {}
+        log.error("Unhandled error occurred in the script key-value aggregator")
+        return {}
 
     def collect(self, unique_keys: bool = False) -> Dict[str, List[str]]:
         with open(self.script_path) as fh:
@@ -49,7 +55,7 @@ class ScriptKeyValueAggregator:
                 continue
             arr = line.strip().split("=")
             if len(arr) < 2:
-                log.debug(f"Skipping line without output")
+                log.debug("Skipping line without output")
                 continue
             if len(arr) > 2:
                 log.error(

@@ -24,7 +24,7 @@ def run_daemon(args):
 
 
 def show_artifact(_):
-    log.info(f"Showing Artifact: ")
+    log.info("Showing Artifact: ")
 
 
 def run_bootstrap(_):

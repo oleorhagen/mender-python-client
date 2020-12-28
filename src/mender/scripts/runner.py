@@ -18,5 +18,9 @@ import logging as log
 def run_sub_updater() -> bool:
     """run_sub_updater runs the /var/lib/mender/install script"""
     log.info("Running the sub-updater script at /var/lib/mender/install")
-    subprocess.run("/var/lib/mender/install")
-    return True
+    try:
+        subprocess.run("/var/lib/mender/install", check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        log.error(f"Failed to run the install script '/var/lib/mender/install' {e}")
+    return False
