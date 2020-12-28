@@ -36,6 +36,7 @@ test:static:
     before_script:
         - pip install --cache-dir=~/.cache/pip-test mypy
         - pip install --cache-dir=~/.cache/pip-test pylint
+        - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
     script:
         - mypy src
         - pylint --rcfile=.pylintrc-develop src
@@ -48,4 +49,4 @@ test:unit:
         - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
         - pip install --cache-dir=~/.cache/pip-test/ .
     script:
-        - python -m pytest -s tests
+        - python -m pytest -s tests/unit
