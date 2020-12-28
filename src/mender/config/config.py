@@ -31,7 +31,7 @@ class Config:
     UpdatePollIntervalSeconds = ""
     RetryPollIntervalSeconds = ""
 
-    def __init__(self, global_conf: dict = {}, local_conf: dict = {}):
+    def __init__(self, global_conf: dict, local_conf: dict):
         vals = {**global_conf, **local_conf}
         for k, v in vals.items():
             if k == "ServerURL":
