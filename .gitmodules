@@ -1,0 +1,4 @@
+[submodule "integtration"]
+	path = tests/integration/integration
+	url = /home/olepor/mendersoftware/integration
+	branch = master
