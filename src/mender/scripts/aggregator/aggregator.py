@@ -30,7 +30,11 @@ class ScriptKeyValueAggregator:
     def run(self) -> dict:
         try:
             output = subprocess.run(
-                self.script_path, stdout=subprocess.PIPE, timeout=100, check=True
+                self.script_path,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                timeout=100,
+                check=True,
             )
             data = output.stdout.decode()
             return self.parse(data)
