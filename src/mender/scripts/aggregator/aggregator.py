@@ -38,7 +38,7 @@ class ScriptKeyValueAggregator:
             if e.returncode != 0:
                 log.error(
                     f"Failed to aggregate key-value pairs from {self.script_path}.\
-                    Script returned: {output.returncode}, stderr: {e.stderr.decode()}"
+                    Script returned: {e.returncode}, stderr: {e.stderr.decode()}"
                 )
                 return {}
         log.error("Unhandled error occurred in the script key-value aggregator")
