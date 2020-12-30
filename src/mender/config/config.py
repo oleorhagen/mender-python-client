@@ -34,22 +34,31 @@ class Config:
 
     def __init__(self, global_conf: dict, local_conf: dict):
         vals = {**global_conf, **local_conf}
+        log.debug("Mender configuration values:")
         for k, v in vals.items():
             if k == "ServerURL":
+                log.debug(f"ServerURL: {v}")
                 self.ServerURL = v
             elif k == "RootfsPartA":
+                log.debug(f"RootfsPartA: {v}")
                 self.RootfsPartA = v
             elif k == "RootfsPartB":
+                log.debug(f"RootfsPartB: {v}")
                 self.RootfsPartB = v
             elif k == "TenantToken":
+                log.debug(f"TenantToken: {v}")
                 self.TenantToken = v
             elif k == "InventoryPollIntervalSeconds":
+                log.debug(f"InventoryPollInvervalSeconds: {v}")
                 self.InventoryPollIntervalSeconds = v
             elif k == "UpdatePollIntervalSeconds":
+                log.debug(f"UpdatePollIntervalSeconds: {v}")
                 self.UpdatePollIntervalSeconds = v
             elif k == "RetryPollIntervalSeconds":
+                log.debug(f"RetryPollIntervalSeconds: {v}")
                 self.RetryPollIntervalSeconds = v
             elif k == "ServerCertificate":
+                log.debug(f"ServerCertificate: {v}")
                 self.ServerCertificate = v
             else:
                 log.error(f"The key {k} is not recognized by the Python client")
