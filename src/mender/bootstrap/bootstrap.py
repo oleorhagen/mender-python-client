@@ -38,14 +38,18 @@ def now(
     """
     log.info("Bootstrapping the device")
     private_key: Optional[RSAPrivateKeyWithSerialization] = None
-    if not force_bootstrap:
-        private_key = key_already_generated(private_key_path)
-    if not private_key:
-        log.info("Generating a new RSA key pair..")
-        private_key = key.generate_key()
-        key.store_key(private_key, private_key_path)
-    log.info("Device bootstrapped successfully")
-    return private_key
+    try:
+        if not force_bootstrap:
+            private_key = key_already_generated(private_key_path)
+        if not private_key:
+            log.info("Generating a new RSA key pair..")
+            private_key = key.generate_key()
+            key.store_key(private_key, private_key_path)
+        log.info("Device bootstrapped successfully")
+        return private_key
+    except FileNotFoundError as e:
+        log.error(f"The directory in the path: {private_key_path} not found")
+        return None
 
 
 def key_already_generated(
