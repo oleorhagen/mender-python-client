@@ -69,7 +69,7 @@ def request(
         update_json = r.json()
         deployment_info = DeploymentInfo(update_json)
     elif r.status_code == 204:
-        log.info("No new update available}")
+        log.info("No new update available")
     elif r.status_code == 401:
         log.info(f"The client seems to have been unathorized {r}")
         raise HTTPUnathorized()
