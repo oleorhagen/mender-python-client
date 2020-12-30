@@ -49,7 +49,7 @@ class State:
 class Init(State):
     def run(self, context, force_bootstrap=False):
         log.debug("InitState: run()")
-        context.config = config.Config()
+        context.config = config.Config({}, {})
         try:
             context.config = config.load(
                 local_path=settings.Path().local_conf,
