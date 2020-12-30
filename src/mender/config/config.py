@@ -30,6 +30,7 @@ class Config:
     InventoryPollIntervalSeconds = ""
     UpdatePollIntervalSeconds = ""
     RetryPollIntervalSeconds = ""
+    ServerCertificate = ""
 
     def __init__(self, global_conf: dict, local_conf: dict):
         vals = {**global_conf, **local_conf}
@@ -48,6 +49,8 @@ class Config:
                 self.UpdatePollIntervalSeconds = v
             elif k == "RetryPollIntervalSeconds":
                 self.RetryPollIntervalSeconds = v
+            elif k == "ServerCertificate":
+                self.ServerCertificate = v
             else:
                 log.error(f"The key {k} is not recognized by the Python client")
 

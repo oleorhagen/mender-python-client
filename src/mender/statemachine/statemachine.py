@@ -128,6 +128,7 @@ class Authorize(State):
             context.config.TenantToken,
             context.identity_data,
             context.private_key,
+            server_certificate=context.config.ServerCertificate,
         )
 
 
