@@ -28,8 +28,9 @@ def request(
     tenant_token: str,
     id_data: dict,
     private_key: RSAPrivateKeyWithSerialization,
+    server_certificate: str,
 ) -> Optional[JWTToken]:
-    return authorize(server_url, id_data, tenant_token, private_key)
+    return authorize(server_url, id_data, tenant_token, private_key, server_certificate)
 
 
 def authorize(
@@ -61,7 +62,9 @@ def authorize(
     }
     try:
         if server_certificate != "":
-            log.info(f"Trying to authorize with the server-certificate: {server_certificate}")
+            log.info(
+                f"Trying to authorize with the server-certificate: {server_certificate}"
+            )
         r = requests.post(
             server_url + "/api/devices/v1/authentication/auth_requests",
             data=raw_data,
