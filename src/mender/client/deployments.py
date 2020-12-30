@@ -42,6 +42,7 @@ def request(
     JWT: str,
     device_type: Optional[dict],
     artifact_name: Optional[dict],
+    server_certificate: str,
 ) -> Optional[DeploymentInfo]:
     if not server_url:
         log.error("ServerURL not provided. Update cannot proceed")
@@ -58,6 +59,7 @@ def request(
         server_url + "/api/devices/v1/deployments/device/deployments/next",
         headers=headers,
         params=parameters,
+        verify=server_certificate if server_certificate else True,
     )
     log.debug(f"update: request: {r}")
     log.error(f"Error {r.reason}. code: {r.status_code}")
@@ -77,7 +79,9 @@ def request(
     return deployment_info
 
 
-def download(deployment_data: DeploymentInfo, artifact_path: str) -> bool:
+def download(
+    deployment_data: DeploymentInfo, artifact_path: str, server_certificate: str
+) -> bool:
     """Download the update artifact to the artifact_path"""
     if not artifact_path:
         log.error("No path provided in which to store the Artifact")
@@ -85,7 +89,11 @@ def download(deployment_data: DeploymentInfo, artifact_path: str) -> bool:
     update_url = deployment_data.artifact_uri
     log.info(f"Downloading Artifact: {artifact_path}")
     try:
-        response = requests.get(update_url, stream=True)
+        response = requests.get(
+            update_url,
+            stream=True,
+            verify=server_certificate if server_certificate else True,
+        )
         with open(artifact_path, "wb") as fh:
             for data in response.iter_content():
                 fh.write(data)

@@ -16,7 +16,9 @@ import logging as log
 import requests
 
 
-def request(server_url: str, JWT: str, inventory_data: dict) -> None:
+def request(
+    server_url: str, JWT: str, inventory_data: dict, server_certificate: str
+) -> None:
     if not server_url:
         log.error("ServerURL not provided, unable to upload the inventory")
         return None
@@ -37,6 +39,7 @@ def request(server_url: str, JWT: str, inventory_data: dict) -> None:
             server_url + "/api/devices/v1/inventory/device/attributes",
             headers=headers,
             data=raw_data,
+            verify=server_certificate if server_certificate else True,
         )
     except (
         requests.RequestException,

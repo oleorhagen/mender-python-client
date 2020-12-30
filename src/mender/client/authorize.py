@@ -61,7 +61,7 @@ def authorize(
         "Authorization": "API_KEY",
     }
     try:
-        if server_certificate != "":
+        if server_certificate:
             log.info(
                 f"Trying to authorize with the server-certificate: {server_certificate}"
             )
@@ -69,7 +69,7 @@ def authorize(
             server_url + "/api/devices/v1/authentication/auth_requests",
             data=raw_data,
             headers=headers,
-            verify=server_certificate if server_certificate != "" else True,
+            verify=server_certificate if server_certificate else True,
         )
     except (
         requests.RequestException,

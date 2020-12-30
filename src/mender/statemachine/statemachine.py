@@ -193,7 +193,10 @@ class SyncInventory(State):
         if inventory_data:
             log.debug(f"aggreated inventory data: {inventory_data}")
             client_inventory.request(
-                context.config.ServerURL, context.JWT, inventory_data
+                context.config.ServerURL,
+                context.JWT,
+                inventory_data,
+                context.config.ServerCertificate,
             )
         else:
             log.info("No inventory data found")
@@ -210,6 +213,7 @@ class SyncUpdate(State):
             context.JWT,
             device_type=device_type,
             artifact_name=artifact_name,
+            server_certificate=context.config.ServerCertificate,
         )
         if deployment:
             context.deployment = deployment
@@ -244,6 +248,7 @@ class Download(State):
             artifact_path=os.path.join(
                 settings.Path().artifact_download, "artifact.mender"
             ),
+            server_certificate=context.config.ServerCertificate,
         ):
             return ArtifactInstall()
         return ArtifactFailure()
