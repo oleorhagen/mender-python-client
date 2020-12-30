@@ -25,7 +25,7 @@ import mender.scripts.devicetype as devicetype
 def aggregate(script_path: str, device_type_path: str, artifact_info_path: str) -> dict:
     """Runs all the inventory scripts in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
-    log.info("Aggregating inventory data from {script_path}")
+    log.info(f"Aggregating inventory data from {script_path}")
     keyvals: dict = {}
     for inventory_script in inventory_scripts(script_path):
         keyvals.update(inventory_script.run())
