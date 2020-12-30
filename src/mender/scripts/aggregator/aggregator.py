@@ -35,12 +35,12 @@ class ScriptKeyValueAggregator:
             data = output.stdout.decode()
             return self.parse(data)
         except subprocess.CalledProcessError as e:
-            if e.returncode != 0:
-                log.error(
-                    f"Failed to aggregate key-value pairs from {self.script_path}.\
-                    Script returned: {e.returncode}, stderr: {e.stderr.decode()}"
-                )
-                return {}
+            errout = ", stderr: " + e.stderr.decode() if e.stderr else ""
+            log.error(
+                f"Failed to aggregate key-value pairs from {self.script_path}.\
+                Script returned: {e.returncode}{errout}"
+            )
+            return {}
         log.error("Unhandled error occurred in the script key-value aggregator")
         return {}
 
