@@ -8,7 +8,7 @@ Type=idle
 User=root
 Group=root
 ExecStart=/usr/bin/mender-python-client daemon
-Restart=on-abort
+Restart=on-failure
 
 [Install]
 WantedBy=multi-user.target
