@@ -1,5 +1,5 @@
 [Unit]
-Description=Mender OTA update service
+Description=Mender-Python-client OTA update service
 Wants=network-online.target
 After=systemd-resolved.service network-online.target
 
