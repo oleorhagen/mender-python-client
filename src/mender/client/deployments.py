@@ -107,3 +107,30 @@ def download(
         log.error(e)
         return False
     return True
+
+
+def report(server_url, status, id, server_certificate, JWT):
+    """Report update :param status to the Mender server"""
+    if not status:
+        log.error("No status given to report")
+        return False
+    try:
+        headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
+        response = requests.put(
+            server_url
+            + "/api/devices/v1/deployments/device/deployments/"
+            + id
+            + "/status",
+            verify=server_certificate if server_certificate else True,
+            json={"status": status},
+        )
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as e:
+        log.error(e)
+        return False
+    return True

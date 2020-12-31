@@ -36,6 +36,15 @@ def run_version(_):
     print("version: alpha")
 
 
+def report(args):
+    if args.success:
+        log.info("Reporting a successful update to the Mender server")
+    elif args.failure:
+        log.info("Reporting a failed update to the Mender server")
+    else:
+        log.error("No report status given")
+
+
 def setup_log(args):
     level = {
         "debug": log.DEBUG,
@@ -81,6 +90,22 @@ def main():
         help="Print the current Artifact name to the command line and exit.",
     )
     show_artifact_parser.set_defaults(func=show_artifact)
+    report_parser = subcommand_parser.add_parser(
+        "report", help="Report the update status",
+    )
+    report_parser.set_defaults(func=report)
+    report_parser.add_argument(
+        "--success",
+        help="Report a succesful update to the Mender server",
+        default=False,
+        action="store_true",
+    )
+    report_parser.add_argument(
+        "--failure",
+        help="Report a failed update to the Mender server",
+        default=False,
+        action="store_true",
+    )
     #
     # Options
     #
