@@ -16,6 +16,7 @@ import os.path
 
 SLEEP_INTERVAL = 60
 
+
 class Path:
     """Hold all the path configuration for the client
 
