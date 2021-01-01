@@ -262,7 +262,7 @@ class Download(State):
 class ArtifactInstall(State):
     def run(self, context):
         log.info("Running the ArtifactInstall state...")
-        if installscriptrunner.run_sub_updater():
+        if installscriptrunner.run_sub_updater(context.deployment.ID):
             return ArtifactReboot()
         return ArtifactFailure()
 
