@@ -47,7 +47,7 @@ class Path:
         self.artifact_info = os.path.join(self.conf, "artifact_info")
         self.device_type = os.path.join(self.data_store, "device_type")
 
-        self.artifact_download = self.data_dir
+        self.artifact_download = self.data_store
 
         self.deployment_log = "/data/"
 
