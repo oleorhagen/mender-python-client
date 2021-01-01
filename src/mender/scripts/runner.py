@@ -24,7 +24,13 @@ def run_sub_updater(deployment_id: str) -> bool:
         # Store the deployment ID in the update lockfile
         with open(settings.Path().lockfile_path) as f:
             f.write(deployment_id)
-        subprocess.run("/var/lib/mender/install", check=True)
+        subprocess.run(
+            [
+                "/var/lib/mender/install",
+                settings.Path().artifact_download + "/artifact.mender",
+            ],
+            check=True,
+        )
         return True
     except subprocess.CalledProcessError as e:
         log.error(f"Failed to run the install script '/var/lib/mender/install' {e}")

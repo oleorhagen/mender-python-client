@@ -65,7 +65,6 @@ def request(
         verify=server_certificate if server_certificate else True,
     )
     log.debug(f"update: request: {r}")
-    log.error(f"Error {r.reason}. code: {r.status_code}")
     deployment_info = None
     if r.status_code == 200:
         log.info(f"New update available: {r.text}")
@@ -77,6 +76,7 @@ def request(
         log.info(f"The client seems to have been unathorized {r}")
         raise HTTPUnathorized()
     else:
+        log.error(f"Error {r.reason}. code: {r.status_code}")
         log.debug(f"{r.json()}")
         log.error("Error while fetching update")
     return deployment_info
