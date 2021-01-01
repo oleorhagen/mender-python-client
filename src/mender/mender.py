@@ -13,9 +13,14 @@
 #    limitations under the License.
 import argparse
 import logging as log
+import sys
 
-import mender.statemachine.statemachine as statemachine
 import mender.bootstrap.bootstrap as bootstrap
+import mender.client.authorize as authorize
+import mender.client.deployments as deployments
+import mender.config.config as config
+import mender.statemachine.statemachine as statemachine
+import mender.settings.settings as settings
 
 
 def run_daemon(args):
@@ -37,12 +42,52 @@ def run_version(_):
 
 
 def report(args):
+    context = statemachine.Context()
+    context = statemachine.Init().run(context)
+    jwt = authorize.request(
+        context.config.ServerURL,
+        context.config.TenantToken,
+        context.identity_data,
+        context.private_key,
+        context.config.ServerCertificate,
+    )
+    if not jwt:
+        log.error("Failed to authorize with the Mender server")
+        sys.exit(1)
+    try:
+        with open(settings.Path().lockfile_path) as f:
+            deployment_id = f.read()
+            if not deployment_id:
+                log.error("No deployment ID found in the lockfile")
+                sys.exit(1)
+    except FileNotFoundError:
+        log.error("No update in progress...")
+        sys.exit(1)
     if args.success:
         log.info("Reporting a successful update to the Mender server")
+        if not deployments.report(
+            context.config.ServerURL,
+            deployments.STATUS_SUCCESS,
+            deployment_id,
+            context.config.ServerCertificate,
+            jwt,
+        ):
+            log.error("Failed to report the update status to the Mender server")
+            sys.exit(1)
     elif args.failure:
         log.info("Reporting a failed update to the Mender server")
+        if not deployments.report(
+            context.config.ServerURL,
+            deployments.STATUS_FAILURE,
+            deployment_id,
+            context.config.ServerCertificate,
+            jwt,
+        ):
+            log.error("Failed to report the update status to the Mender server")
+            sys.exit(1)
     else:
         log.error("No report status given")
+        sys.exit(1)
 
 
 def setup_log(args):

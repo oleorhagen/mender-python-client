@@ -17,6 +17,9 @@ import requests
 
 from mender.client import HTTPUnathorized
 
+STATUS_SUCCESS = "success"
+STATUS_FAILURE = "failure"
+
 
 class DeploymentInfo:
     """Class which holds all the information related to a deployment.
@@ -109,7 +112,9 @@ def download(
     return True
 
 
-def report(server_url, status, id, server_certificate, JWT):
+def report(
+    server_url: str, status: str, deployment_id: str, server_certificate: str, JWT: str
+) -> bool:
     """Report update :param status to the Mender server"""
     if not status:
         log.error("No status given to report")
@@ -119,11 +124,17 @@ def report(server_url, status, id, server_certificate, JWT):
         response = requests.put(
             server_url
             + "/api/devices/v1/deployments/device/deployments/"
-            + id
+            + deployment_id
             + "/status",
             verify=server_certificate if server_certificate else True,
             json={"status": status},
         )
+        if response.status_code != 200:
+            log.error(
+                f"Failed to upload the deployment status '{status}',\
+                error: {response.status_code}: {response.reason}"
+            )
+            return False
     except (
         requests.RequestException,
         requests.ConnectionError,

@@ -14,6 +14,8 @@
 import os.path
 
 
+SLEEP_INTERVAL = 60
+
 class Path:
     """Hold all the path configuration for the client
 
@@ -47,3 +49,5 @@ class Path:
         self.artifact_download = self.data_dir
 
         self.deployment_log = "/data/"
+
+        self.lockfile_path = "/data/mender/update.lock"

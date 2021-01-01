@@ -14,11 +14,16 @@
 import subprocess
 import logging as log
 
+import mender.settings as settings
 
-def run_sub_updater() -> bool:
+
+def run_sub_updater(deployment_id: str) -> bool:
     """run_sub_updater runs the /var/lib/mender/install script"""
     log.info("Running the sub-updater script at /var/lib/mender/install")
     try:
+        # Store the deployment ID in the update lockfile
+        with open(settings.Path().lockfile_path) as f:
+            f.write(deployment_id)
         subprocess.run("/var/lib/mender/install", check=True)
         return True
     except subprocess.CalledProcessError as e:
