@@ -145,10 +145,6 @@ def report(
             log.add_sub_updater_log(
                 os.path.join(settings.path().deployment_log, "deployment.log")
             )
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer " + JWT,
-            }
             response = requests.put(
                 server_url
                 + "/api/devices/v1/deployments/device/deployments/"
