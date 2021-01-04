@@ -27,7 +27,7 @@ test:runtime:
         - cp support/* /var/lib/mender/inventory/
         - pip install --cache-dir=~/.cache/pip-test/ .
     script:
-        - mender bootstrap
+        - mender-python-client bootstrap
 
 test:static:
     extends: .test
