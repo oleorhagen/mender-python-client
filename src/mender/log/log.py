@@ -32,6 +32,9 @@ class DeploymentLogHandler(logging.FileHandler):
 
     def enable(self):
         self.enabled = True
+        filename = os.path.join(self.log_dir, "deployment.log")
+        # Reset the log file
+        super().__init__(filename, mode="w")
 
     def disable(self):
         self.enabled = False
