@@ -13,8 +13,10 @@
 #    limitations under the License.
 import logging as log
 from typing import Optional
+import os.path
 import requests
 
+import mender.settings.settings as settings
 from mender.client import HTTPUnathorized
 
 STATUS_SUCCESS = "success"
@@ -92,14 +94,14 @@ def download(
     update_url = deployment_data.artifact_uri
     log.info(f"Downloading Artifact: {artifact_path}")
     try:
-        response = requests.get(
+        with requests.get(
             update_url,
             stream=True,
             verify=server_certificate if server_certificate else True,
-        )
-        with open(artifact_path, "wb") as fh:
-            for data in response.iter_content():
-                fh.write(data)
+        ) as response:
+            with open(artifact_path, "wb") as fh:
+                for data in response.iter_content():
+                    fh.write(data)
     except (
         requests.RequestException,
         requests.ConnectionError,
@@ -135,6 +137,37 @@ def report(
                 error: {response.status_code}: {response.reason}"
             )
             return False
+        if status == STATUS_FAILURE:
+            log.add_sub_updater_log(
+                os.path.join(settings.path().deployment_log, "deployment.log")
+            )
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + JWT,
+            }
+            response = requests.put(
+                server_url
+                + "/api/devices/v1/deployments/device/deployments/"
+                + deployment_id
+                + "/log",
+                verify=server_certificate if server_certificate else True,
+                data={
+                    "messages": {
+                        # Dummy data
+                        {
+                            "timestamp": "2016-03-11T13:03:17.063493443Z",
+                            "level": "INFO",
+                            "message": "OK",
+                        }
+                    }
+                },
+            )
+            if response.status_code != 200:
+                log.error(
+                    f"Failed to upload the deployment log,\
+                    error: {response.status_code}: {response.reason}"
+                )
+                return False
     except (
         requests.RequestException,
         requests.ConnectionError,

@@ -107,9 +107,6 @@ class StateMachine:
         logger = log.getLogger("")
         logger.addHandler(deployment_log_handler)
         self.context.deployment_log_handler = deployment_log_handler
-        if self.context.deployment_active:
-            self.context.deployment_log_handler.enable()
-            raise Exception("Unimplemented - active_deployment_handling")
         self.context.deployment_log_handler.disable()
         while True:
             self.unauthorized_machine.run(self.context)

@@ -26,7 +26,7 @@ def run_sub_updater(deployment_id: str) -> bool:
             f.write(deployment_id)
         subprocess.run(
             [
-                "/var/lib/mender/install",
+                "/usr/share/mender/install",
                 settings.Path().artifact_download + "/artifact.mender",
             ],
             check=True,

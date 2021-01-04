@@ -19,13 +19,12 @@ import os.path
 import mender.settings.settings as settings
 
 
-class DeploymentLogHandler(logging.handlers.RotatingFileHandler):
+class DeploymentLogHandler(logging.handlers.FileHandler):
     def __init__(self):
         self.enabled = False
         self.log_dir = settings.Path().deployment_log
-        super().__init__(
-            filename=os.path.join(self.log_dir, "deployment-uninitialized.log")
-        )
+        filename = os.path.join(self.log_dir, "deployment.log", mode="w")
+        super().__init__(filename=filename)
 
     def handle(self, record):
         if self.enabled:
@@ -36,7 +35,6 @@ class DeploymentLogHandler(logging.handlers.RotatingFileHandler):
 
     def disable(self):
         self.enabled = False
-        self.doRollover()
 
 
 def add_sub_updater_log(log_file):
