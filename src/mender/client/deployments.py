@@ -101,7 +101,10 @@ def download(
         ) as response:
             with open(artifact_path, "wb") as fh:
                 for data in response.iter_content():
+                    if not data:
+                        break
                     fh.write(data)
+                    fh.flush()
     except (
         requests.RequestException,
         requests.ConnectionError,
