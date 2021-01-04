@@ -17,6 +17,7 @@ import os.path
 import requests
 
 import mender.settings.settings as settings
+import mender.log.log as menderlog
 from mender.client import HTTPUnathorized
 
 STATUS_SUCCESS = "success"
@@ -135,15 +136,15 @@ def report(
             verify=server_certificate if server_certificate else True,
             json={"status": status},
         )
-        if response.status_code != 200:
+        if response.status_code != 204:
             log.error(
                 f"Failed to upload the deployment status '{status}',\
                 error: {response.status_code}: {response.reason}"
             )
             return False
         if status == STATUS_FAILURE:
-            log.add_sub_updater_log(
-                os.path.join(settings.path().deployment_log, "deployment.log")
+            menderlog.add_sub_updater_log(
+                os.path.join(settings.Path().deployment_log, "deployment.log")
             )
             response = requests.put(
                 server_url
@@ -152,21 +153,21 @@ def report(
                 + "/log",
                 headers=headers,
                 verify=server_certificate if server_certificate else True,
-                data={
-                    "messages": {
+                json={
+                    "messages": [
                         # Dummy data
                         {
                             "timestamp": "2016-03-11T13:03:17.063493443Z",
                             "level": "INFO",
                             "message": "OK",
                         }
-                    }
+                    ]
                 },
             )
-            if response.status_code != 200:
+            if response.status_code != 204:
                 log.error(
                     f"Failed to upload the deployment log,\
-                    error: {response.status_code}: {response.reason}"
+                    error: {response.status_code}: {response.reason} {response.text}"
                 )
                 return False
     except (

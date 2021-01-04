@@ -40,8 +40,7 @@ class DeploymentLogHandler(logging.FileHandler):
 def add_sub_updater_log(log_file):
     try:
         with open(log_file) as fh:
-            log_data = fh.read()
-            log_string = log_data.decode()
+            log_string = fh.read()
             log.info(f"Sub-updater-logs follows:\n{log_string}")
     except FileNotFoundError:
         log.error(
