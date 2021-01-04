@@ -18,9 +18,8 @@ import sys
 import mender.bootstrap.bootstrap as bootstrap
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
-import mender.config.config as config
-import mender.statemachine.statemachine as statemachine
 import mender.settings.settings as settings
+import mender.statemachine.statemachine as statemachine
 
 
 def run_daemon(args):

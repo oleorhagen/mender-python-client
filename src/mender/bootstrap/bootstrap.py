@@ -47,7 +47,7 @@ def now(
             key.store_key(private_key, private_key_path)
         log.info("Device bootstrapped successfully")
         return private_key
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         log.error(f"The directory in the path: {private_key_path} not found")
         return None
 
