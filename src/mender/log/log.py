@@ -23,7 +23,7 @@ class DeploymentLogHandler(logging.handlers.FileHandler):
     def __init__(self):
         self.enabled = False
         self.log_dir = settings.Path().deployment_log
-        filename = os.path.join(self.log_dir, "deployment.log", mode="w")
+        filename = os.path.join(self.log_dir, "deployment.log")
         super().__init__(filename=filename)
 
     def handle(self, record):

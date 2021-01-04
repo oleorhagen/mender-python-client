@@ -131,6 +131,7 @@ def report(
             + "/api/devices/v1/deployments/device/deployments/"
             + deployment_id
             + "/status",
+            headers=headers,
             verify=server_certificate if server_certificate else True,
             json={"status": status},
         )
@@ -153,6 +154,7 @@ def report(
                 + "/api/devices/v1/deployments/device/deployments/"
                 + deployment_id
                 + "/log",
+                headers=headers,
                 verify=server_certificate if server_certificate else True,
                 data={
                     "messages": {
