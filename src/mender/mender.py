@@ -195,12 +195,6 @@ def main():
         action="store_true",
     )
     global_options.add_argument(
-        "--skipverify",
-        help="Skip certificate verification.",
-        default=False,
-        action="store_true",
-    )
-    global_options.add_argument(
         "--version", "-v", help="print the version", default=False, action="store_true"
     )
     args = parser.parse_args()
