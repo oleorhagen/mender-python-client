@@ -23,7 +23,7 @@ import mender.settings.settings as settings
 
 
 def now(
-    force_bootstrap: bool = False, private_key_path: str = settings.Path().key
+    force_bootstrap: bool = False, private_key_path: str = settings.PATHS.key
 ) -> Optional[RSAPrivateKeyWithSerialization]:
     """Bootstrap the device
 

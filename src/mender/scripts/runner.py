@@ -22,12 +22,12 @@ def run_sub_updater(deployment_id: str) -> bool:
     log.info("Running the sub-updater script at /usr/share/mender/install")
     try:
         # Store the deployment ID in the update lockfile
-        with open(settings.Path().lockfile_path, "w") as f:
+        with open(settings.PATHS.lockfile_path, "w") as f:
             f.write(deployment_id)
         subprocess.run(
             [
                 "/usr/share/mender/install",
-                settings.Path().artifact_download + "/artifact.mender",
+                settings.PATHS.artifact_download + "/artifact.mender",
             ],
             check=True,
         )

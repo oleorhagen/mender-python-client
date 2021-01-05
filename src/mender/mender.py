@@ -24,6 +24,9 @@ import mender.statemachine.statemachine as statemachine
 
 def run_daemon(args):
     log.info("Running daemon...")
+    if args.data:
+        log.info(f"Custom data store set to: {args.data}")
+        settings.PATHS = settings.Path(data_store=args.data)
     statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
 
 
@@ -31,8 +34,11 @@ def show_artifact(_):
     log.info("Showing Artifact: ")
 
 
-def run_bootstrap(_):
+def run_bootstrap(args):
     log.info("Bootstrapping...")
+    if args.data:
+        log.info(f"Custom data store set to: {args.data}")
+        settings.PATHS = settings.Path(data_store=args.data)
     bootstrap.now(force_bootstrap=True)
 
 
@@ -153,6 +159,7 @@ def main():
     #
     # Options
     #
+    global_options = parser.add_argument_group("Global Options")
     global_options.add_argument(
         "--data",
         "-d",

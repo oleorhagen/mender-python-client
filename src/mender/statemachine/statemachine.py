@@ -52,8 +52,8 @@ class Init(State):
         context.config = config.Config({}, {})
         try:
             context.config = config.load(
-                local_path=settings.Path().local_conf,
-                global_path=settings.Path().global_conf,
+                local_path=settings.PATHS.local_conf,
+                global_path=settings.PATHS.global_conf,
             )
             log.info(f"Loaded configuration: {context.config}")
         except config.NoConfigurationFileError:
@@ -61,10 +61,10 @@ class Init(State):
                 "No configuration files found for the device."
                 "Most likely, the device will not be functional."
             )
-        identity_data = identity.aggregate(path=settings.Path().identity_scripts)
+        identity_data = identity.aggregate(path=settings.PATHS.identity_scripts)
         context.identity_data = identity_data
         private_key = bootstrap.now(
-            force_bootstrap=force_bootstrap, private_key_path=settings.Path().key
+            force_bootstrap=force_bootstrap, private_key_path=settings.PATHS.key
         )
         context.private_key = private_key
         log.debug(f"Init set context to: {context}")
@@ -82,7 +82,7 @@ class Init(State):
 
 
 def run():
-    while os.path.exists(settings.Path().lockfile_path):
+    while os.path.exists(settings.PATHS.lockfile_path):
         log.info(
             "A deployment is currently in progress, the client will go to sleep for 60 seconds"
         )
@@ -188,9 +188,9 @@ class SyncInventory(State):
     def run(self, context):
         log.info("Syncing the inventory...")
         inventory_data = inventory.aggregate(
-            settings.Path().inventory_scripts,
-            settings.Path().device_type,
-            settings.Path().artifact_info,
+            settings.PATHS.inventory_scripts,
+            settings.PATHS.device_type,
+            settings.PATHS.artifact_info,
         )
         if inventory_data:
             log.debug(f"aggreated inventory data: {inventory_data}")
@@ -208,8 +208,8 @@ class SyncInventory(State):
 class SyncUpdate(State):
     def run(self, context):
         log.info("Checking for updates...")
-        device_type = devicetype.get(settings.Path().device_type)
-        artifact_name = artifactinfo.get(settings.Path().artifact_info)
+        device_type = devicetype.get(settings.PATHS.device_type)
+        artifact_name = artifactinfo.get(settings.PATHS.artifact_info)
         deployment = deployments.request(
             context.config.ServerURL,
             context.JWT,
@@ -248,7 +248,7 @@ class Download(State):
         if deployments.download(
             context.deployment,
             artifact_path=os.path.join(
-                settings.Path().artifact_download, "artifact.mender"
+                settings.PATHS.artifact_download, "artifact.mender"
             ),
             server_certificate=context.config.ServerCertificate,
         ):

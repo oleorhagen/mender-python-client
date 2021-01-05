@@ -144,7 +144,7 @@ def report(
             return False
         if status == STATUS_FAILURE:
             menderlog.add_sub_updater_log(
-                os.path.join(settings.Path().deployment_log, "deployment.log")
+                os.path.join(settings.PATHS.deployment_log, "deployment.log")
             )
             response = requests.put(
                 server_url

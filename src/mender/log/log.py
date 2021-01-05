@@ -22,7 +22,7 @@ import mender.settings.settings as settings
 class DeploymentLogHandler(logging.FileHandler):
     def __init__(self):
         self.enabled = False
-        self.log_dir = settings.Path().deployment_log
+        self.log_dir = settings.PATHS.deployment_log
         filename = os.path.join(self.log_dir, "deployment.log")
         super().__init__(filename=filename)
 

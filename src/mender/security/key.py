@@ -31,13 +31,13 @@ def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
 
 
 def store_key(
-    private_key: RSAPrivateKeyWithSerialization, path: str = settings.Path().key
+    private_key: RSAPrivateKeyWithSerialization, path: str = settings.PATHS.key
 ):
     log.info(f"Storing key to: {path}")
     rsa.store_key(private_key, path)
 
 
-def load_key(where: str = settings.Path().key_path) -> RSAPrivateKeyWithSerialization:
+def load_key(where: str = settings.PATHS.key_path) -> RSAPrivateKeyWithSerialization:
     log.info(f"Loading key from: {where}")
     return rsa.load_key(where)
 

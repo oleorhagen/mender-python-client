@@ -16,21 +16,20 @@ import os.path
 
 SLEEP_INTERVAL = 60
 
-
 class Path:
     """Hold all the path configuration for the client
 
     Usage::
 
       >>> import mender.settings.settings as settings
-      >>> private_key_location = settings.Path().key
+      >>> private_key_location = settings.PATHS.key
 
 
     """
 
-    def __init__(self):
+    def __init__(self, data_store="/var/lib/mender"):
         self.conf = "/etc/mender"
-        self.data_store = "/var/lib/mender"
+        self.data_store = data_store
         self.data_dir = "/usr/share/mender"
         self.key_filename = "mender-agent.pem"
 
@@ -52,3 +51,6 @@ class Path:
         self.deployment_log = self.data_store
 
         self.lockfile_path = self.data_store + "/update.lock"
+
+# Global singleton
+PATHS = Path()
