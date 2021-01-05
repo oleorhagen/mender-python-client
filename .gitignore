@@ -1,0 +1,5 @@
+.venv
+tmp
+dist
+build
+src/mender_python_client_mendersoftware.egg-info

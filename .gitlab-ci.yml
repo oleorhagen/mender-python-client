@@ -10,3 +10,43 @@ include:
     file: '.gitlab-ci-github-status-updates.yml'
   - project: 'Northern.tech/Mender/mendertesting'
     file: '.gitlab-ci-check-python3-format.yml'
+
+.test:
+    cache:
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - ~/.cache/pip-test/
+
+test:runtime:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - mkdir -p /var/lib/mender/inventory
+        - mkdir -p /etc/mender
+        - cp support/* /var/lib/mender/inventory/
+        - pip install --cache-dir=~/.cache/pip-test/ .
+    script:
+        - mender-python-client bootstrap
+
+test:static:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - pip install --cache-dir=~/.cache/pip-test mypy
+        - pip install --cache-dir=~/.cache/pip-test pylint
+        - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
+    script:
+        - mypy src
+        - pylint --rcfile=.pylintrc-develop src
+
+test:unit:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
+        - pip install --cache-dir=~/.cache/pip-test/ .
+    script:
+        - python -m pytest -s tests/unit
