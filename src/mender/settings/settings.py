@@ -16,6 +16,7 @@ import os.path
 
 SLEEP_INTERVAL = 60
 
+
 class Path:
     """Hold all the path configuration for the client
 
@@ -51,6 +52,7 @@ class Path:
         self.deployment_log = self.data_store
 
         self.lockfile_path = self.data_store + "/update.lock"
+
 
 # Global singleton
 PATHS = Path()
