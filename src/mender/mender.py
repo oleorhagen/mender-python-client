@@ -31,7 +31,13 @@ def run_daemon(args):
 
 
 def show_artifact(_):
-    log.info("Showing Artifact: ")
+    log.info("Currently installed Artifact: ")
+    try:
+        with open(settings.PATHS.data_store + "/device_type") as f:
+            data = f.read()
+            log.info(data)
+    except FileNotFoundError:
+        log.error(f"No device_type file found in {settings.PATHS.data_store}")
 
 
 def run_bootstrap(args):
