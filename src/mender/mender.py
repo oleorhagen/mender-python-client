@@ -25,7 +25,7 @@ import mender.statemachine.statemachine as statemachine
 def run_daemon(args):
     log.info("Running daemon...")
     if args.data:
-        log.info(f"Custom data store set to: {args.data}")
+        log.info(f"Data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
     statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
 
