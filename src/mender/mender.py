@@ -153,19 +153,6 @@ def main():
     #
     # Options
     #
-    global_options = parser.add_argument_group("GLOBAL OPTIONS")
-    global_options.add_argument(
-        "--config",
-        "-c",
-        help="Configuration FILE path.",
-        default="/etc/mender/mender.conf",
-    )
-    global_options.add_argument(
-        "--fallback-config",
-        "-b",
-        help="Fallback configuration FILE path.",
-        default="/var/lib/mender/mender.conf",
-    )
     global_options.add_argument(
         "--data",
         "-d",
@@ -180,12 +167,6 @@ def main():
     )
     global_options.add_argument(
         "--log-level", "-l", help="Set logging to level.", default="info"
-    )
-    global_options.add_argument(
-        "--trusted-certs",
-        "-E",
-        help="Truster server certificates FILE path.",
-        default="system certificates",
     )
     global_options.add_argument(
         "--forcebootstrap",
