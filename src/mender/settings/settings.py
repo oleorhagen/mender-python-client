@@ -49,6 +49,6 @@ class Path:
 
         self.artifact_download = self.data_store
 
-        self.deployment_log = "/data/"
+        self.deployment_log = self.data_store
 
-        self.lockfile_path = "/data/mender/update.lock"
+        self.lockfile_path = self.data_store + "/update.lock"
