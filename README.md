@@ -1,5 +1,5 @@
-<!-- [![Build Status](https://gitlab.com/Northern.tech/Mender/mender-python-client/badges/master/pipeline.svg)](https://gitlab.com/Northern.tech/Mender/mender-python-client/pipelines) -->
-<!-- [![Coverage Status](https://coveralls.io/repos/github/mendersoftware/mender-python-client/badge.svg?branch=master)](https://coveralls.io/github/mendersoftware/mender-python-client?branch=master) -->
+[![Build Status](https://gitlab.com/Northern.tech/Mender/mender-python-client/badges/master/pipeline.svg)](https://gitlab.com/Northern.tech/Mender/mender-python-client/pipelines)
+[![Coverage Status](https://coveralls.io/repos/github/mendersoftware/mender-python-client/badge.svg?branch=master)](https://coveralls.io/github/mendersoftware/mender-python-client?branch=master)
 
 Mender Python Client: A Python implementation of the Mender client
 ==============================================
