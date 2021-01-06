@@ -49,4 +49,4 @@ test:unit:
         - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
         - pip install --cache-dir=~/.cache/pip-test/ .
     script:
-        - python -m pytest -s tests/unit
+        - pytest --cov-report=xml:cov.xml --cov=src/mender tests/unit
