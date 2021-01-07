@@ -45,7 +45,7 @@ def run_bootstrap(args):
     if args.data:
         log.info(f"Custom data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
-    bootstrap.now(force_bootstrap=True)
+    bootstrap.now(force_bootstrap=args.forcebootstrap)
 
 
 def run_version(_):
