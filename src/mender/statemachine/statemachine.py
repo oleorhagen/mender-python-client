@@ -245,6 +245,16 @@ class Download(State):
             ),
             server_certificate=context.config.ServerCertificate,
         ):
+            if not deployments.report(
+                context.config.ServerURL,
+                deployments.STATUS_DOWNLOADING,
+                context.deployment.ID,
+                context.config.ServerCertificate,
+                context.JWT,
+            ):
+                log.error(
+                    "Failed to report the deployment status 'downloading' to the Mender server"
+                )
             return ArtifactInstall()
         return ArtifactFailure()
 

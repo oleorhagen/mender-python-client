@@ -22,6 +22,7 @@ from mender.client import HTTPUnathorized
 
 STATUS_SUCCESS = "success"
 STATUS_FAILURE = "failure"
+STATUS_DOWNLOADING = "downloading"
 
 
 class DeploymentInfo:
