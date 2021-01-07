@@ -30,8 +30,6 @@ def now(
     This includes loading the key assymetric key, or generating it if it is not
     present.
 
-    # TODO Should also authorize with the Mender server
-
     :param force_bootstrap: regenerate the key even if already present
     :param private_key_path: full path (including the filename) to the pem formatted key
     :rtype An instance of `RSAPrivateKey`
