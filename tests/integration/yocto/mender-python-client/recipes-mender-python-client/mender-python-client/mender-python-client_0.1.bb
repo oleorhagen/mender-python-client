@@ -11,7 +11,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=f45908b2c92866a1973f8fba5318cd70"
 
 # TODO - Change to master branch
-SRC_URI = "gitsm://git@github.com/oleorhagen/mender-python-client.git;protocol=ssh;branch=develop \
+SRC_URI = "https://github.com/oleorhagen/mender-python-client.git;protocol=https;branch=develop \
            file://mender-sub-updater \
            file://mender-sub-updater.service"
 
