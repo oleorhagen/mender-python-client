@@ -33,7 +33,7 @@ def run_daemon(args):
 def show_artifact(_):
     log.info("Currently installed Artifact: ")
     try:
-        with open(settings.PATHS.data_store + "/device_type") as f:
+        with open(settings.PATHS.artifact_info) as f:
             data = f.read()
             log.info(data)
     except FileNotFoundError:
@@ -45,7 +45,9 @@ def run_bootstrap(args):
     if args.data:
         log.info(f"Custom data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
-    bootstrap.now(force_bootstrap=args.forcebootstrap)
+    bootstrap.now(
+        private_key_path=settings.PATHS.key, force_bootstrap=args.forcebootstrap
+    )
 
 
 def run_version(_):
