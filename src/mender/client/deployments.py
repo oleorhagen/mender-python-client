@@ -102,7 +102,9 @@ def download(
             verify=server_certificate if server_certificate else True,
         ) as response:
             with open(artifact_path, "wb") as fh:
-                for data in response.iter_content(chunk_size=1024*1024): # 1MiB at a time
+                for data in response.iter_content(
+                    chunk_size=1024 * 1024
+                ):  # 1MiB at a time
                     if not data:
                         break
                     fh.write(data)
