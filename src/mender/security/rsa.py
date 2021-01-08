@@ -43,7 +43,6 @@ def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
 
 
 def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
-    log.info(f"Storing key to: {where}")
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -55,7 +54,6 @@ def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
 
 
 def load_key(where: str) -> RSAPrivateKeyWithSerialization:
-    log.info(f"Loading key from: {where}")
     with open(where, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(), password=None, backend=default_backend()
