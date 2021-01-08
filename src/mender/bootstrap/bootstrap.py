@@ -19,7 +19,6 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSeria
 from cryptography.exceptions import UnsupportedAlgorithm
 
 import mender.security.key as key
-import mender.settings.settings as settings
 
 
 def now(
