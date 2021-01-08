@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -19,18 +19,15 @@ from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSeria
 from cryptography.exceptions import UnsupportedAlgorithm
 
 import mender.security.key as key
-import mender.settings.settings as settings
 
 
 def now(
-    force_bootstrap: bool = False, private_key_path: str = settings.PATHS.key
+    private_key_path: str, force_bootstrap: bool = False
 ) -> Optional[RSAPrivateKeyWithSerialization]:
     """Bootstrap the device
 
     This includes loading the key assymetric key, or generating it if it is not
     present.
-
-    # TODO Should also authorize with the Mender server
 
     :param force_bootstrap: regenerate the key even if already present
     :param private_key_path: full path (including the filename) to the pem formatted key

@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -12,7 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import base64
-import logging as log
 import os
 
 from cryptography.hazmat.backends import default_backend
@@ -43,7 +42,6 @@ def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
 
 
 def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
-    log.info(f"Storing key to: {where}")
     pem = private_key.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -55,7 +53,6 @@ def store_key(private_key: RSAPrivateKeyWithSerialization, where: str):
 
 
 def load_key(where: str) -> RSAPrivateKeyWithSerialization:
-    log.info(f"Loading key from: {where}")
     with open(where, "rb") as key_file:
         private_key = serialization.load_pem_private_key(
             key_file.read(), password=None, backend=default_backend()

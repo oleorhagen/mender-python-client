@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ from mender.client import HTTPUnathorized
 
 STATUS_SUCCESS = "success"
 STATUS_FAILURE = "failure"
+STATUS_DOWNLOADING = "downloading"
 
 
 class DeploymentInfo:
@@ -101,7 +102,9 @@ def download(
             verify=server_certificate if server_certificate else True,
         ) as response:
             with open(artifact_path, "wb") as fh:
-                for data in response.iter_content():
+                for data in response.iter_content(
+                    chunk_size=1024 * 1024
+                ):  # 1MiB at a time
                     if not data:
                         break
                     fh.write(data)

@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -68,13 +68,6 @@ class Init(State):
         )
         context.private_key = private_key
         log.debug(f"Init set context to: {context}")
-        #
-        # We need some way of knowing whether or not a deployment was in
-        # progress, and what the last state was, so that the deployment can be
-        # resumed, and so that we can start the state-machine on the passive
-        # partition, whenever needed. For now though, this is always False.
-        #
-        context.deployment_active = False
         return context
 
 
@@ -252,6 +245,16 @@ class Download(State):
             ),
             server_certificate=context.config.ServerCertificate,
         ):
+            if not deployments.report(
+                context.config.ServerURL,
+                deployments.STATUS_DOWNLOADING,
+                context.deployment.ID,
+                context.config.ServerCertificate,
+                context.JWT,
+            ):
+                log.error(
+                    "Failed to report the deployment status 'downloading' to the Mender server"
+                )
             return ArtifactInstall()
         return ArtifactFailure()
 
