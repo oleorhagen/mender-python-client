@@ -55,6 +55,9 @@ def run_version(_):
 
 
 def report(args):
+    if args.data:
+        log.info(f"Custom data store set to: {args.data}")
+        settings.PATHS = settings.Path(data_store=args.data)
     context = statemachine.Context()
     context = statemachine.Init().run(context)
     jwt = authorize.request(
@@ -68,7 +71,7 @@ def report(args):
         log.error("Failed to authorize with the Mender server")
         sys.exit(1)
     try:
-        with open(settings.Path().lockfile_path) as f:
+        with open(settings.PATHS.lockfile_path) as f:
             deployment_id = f.read()
             if not deployment_id:
                 log.error("No deployment ID found in the lockfile")
