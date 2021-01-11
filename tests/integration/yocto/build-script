@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+
+mkdir yocto
+
+cd yocto
+
+git clone -b dunfell git://git.yoctoproject.org/poky
+git clone -b dunfell https://github.com/openembedded/meta-openembedded.git
+git clone -b dunfell https://github.com/mendersoftware/meta-mender.git
+
+source poky/oe-init-build-env
+
+cp ${script_dir}/{bblayers,local}.conf ./conf
+
+bitbake core-image-full-cmdline
