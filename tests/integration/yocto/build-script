@@ -15,6 +15,12 @@ source poky/oe-init-build-env
 
 cp ${script_dir}/{bblayers,local}.conf ./conf
 
+
+if [ -d /mnt/sstate-cache ]; then
+  cat >> ./conf/local.conf <<EOF
+SSTATE_DIR = "/mnt/sstate-cache"
+EOF
+
 export LANG=en_US.UTF-8
 bitbake mender-python-client
 # bitbake core-image-full-cmdline
