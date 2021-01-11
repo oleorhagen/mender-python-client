@@ -49,14 +49,6 @@ build:client:
     - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
 
 
-build:client-container:
-    stage: build
-    depends: build:client
-    image: docker:19.03
-    services:
-        - docker:19.03-dind
-
-
 .test:
     cache:
         key: ${CI_COMMIT_REF_SLUG}
