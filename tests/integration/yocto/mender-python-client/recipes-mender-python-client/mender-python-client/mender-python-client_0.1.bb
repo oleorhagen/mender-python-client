@@ -1,19 +1,23 @@
 SUMMARY = "A Python implementation of the Mender client interface"
 HOMEPAGE = "https://github.com/mendersoftware/mender-python-client"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+#FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
 FILES_${PN}_append = " ${bindir}mender-sub-updater \
          /var/lib/mender/install \
          ${systemd_unitdir}/system/mender-sub-updater.service \
          ${systemd_unitdir}/system/mender-python-client.service"
 
+
+
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=f45908b2c92866a1973f8fba5318cd70"
 
 # TODO - Change to master branch
-SRC_URI = "https://github.com/oleorhagen/mender-python-client.git;protocol=https;branch=develop \
-           file://mender-sub-updater \
-           file://mender-sub-updater.service"
+SRC_URI = "https://github.com/oleorhagen/mender-python-client.git;protocol=https;branch=develop"
+
+SRC_URI_append = " \
+    file:///builds/project-0/yocto/mender-python-client/recipes-mender-python-client/mender-python-client/files/mender-sub-updater \
+    file:///builds/project-0/yocto/mender-python-client/recipes-mender-python-client/mender-python-client/files/mender-sub-updater.service"
 
 PV = "0.0.1+git${SRCPV}"
 SRCREV = "${AUTOREV}"
