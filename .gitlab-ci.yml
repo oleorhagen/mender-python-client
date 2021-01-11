@@ -31,6 +31,8 @@ include:
 
 build:client:
   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+  tags:
+    - mender-qa-slave-highcpu
   before_script:
     # Export required yocto-build script variables
     - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
