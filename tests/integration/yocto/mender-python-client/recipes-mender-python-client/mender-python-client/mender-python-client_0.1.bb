@@ -10,7 +10,7 @@ FILES_${PN}_append = " ${bindir}mender-sub-updater \
 
 
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://LICENSE;md5=f45908b2c92866a1973f8fba5318cd70"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=dcac2e5bf81a6fe99b034aaaaf1b2019"
 
 # TODO - Change to master branch
 SRC_URI = "git://github.com/oleorhagen/mender-python-client;protocol=https;branch=develop"
