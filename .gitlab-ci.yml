@@ -60,8 +60,9 @@ test:integration:
   dependencies:
       - build:client
   before_script:
-      - docker load stage-artifacts/mender-client-qemu.tar
+      - docker load -i stage-artifacts/mender-client-qemu.tar
       - cd tests/integration
+  script:
       - ./run.sh test_python_api_client::test_update_successful
 
 
