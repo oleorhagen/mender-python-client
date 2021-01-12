@@ -32,6 +32,8 @@ include:
 build:client:
   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
   stage: build
+  services:
+    - docker:19.03-dind
   tags:
     - mender-qa-slave-highcpu
   before_script:
