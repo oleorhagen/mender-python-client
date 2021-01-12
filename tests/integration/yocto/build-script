@@ -2,7 +2,7 @@
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
-mkdir yocto
+mkdir -p yocto
 
 cd yocto
 
@@ -28,4 +28,4 @@ bitbake core-image-full-cmdline
 
 ../meta-mender/meta-mender-qemu/docker/build-docker qemux86-64 -t mendersoftware/mender-client-qemu:master
 
-docker save mendersoftware/mender-client-qemu:master -o stage-artifacts/mender-client-qemu.tar
+docker save mendersoftware/mender-client-qemu:master -o ${CI_PROJECT_DIR}/stage-artifacts/mender-client-qemu.tar
