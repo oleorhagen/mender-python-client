@@ -58,10 +58,10 @@ test:integration:
   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
   stage: test
   extends: .test
-  # needs:
-  #     - build:client
-  # dependencies:
-  #     - build:client
+  needs:
+      - build:client
+  dependencies:
+      - build:client
   before_script:
       - docker load -i stage-artifacts/mender-client-qemu.tar
       - cd tests/integration
