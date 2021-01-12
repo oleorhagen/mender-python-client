@@ -16,8 +16,8 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=dcac2e5bf81a6fe99b034aaaaf1b2019"
 SRC_URI = "git://github.com/oleorhagen/mender-python-client;protocol=https;branch=develop"
 
 SRC_URI_append = " \
-    file:///builds/project-0/yocto/mender-python-client/recipes-mender-python-client/mender-python-client/files/mender-sub-updater \
-    file:///builds/project-0/yocto/mender-python-client/recipes-mender-python-client/mender-python-client/files/mender-sub-updater.service"
+    file://mender-sub-updater \
+    file://mender-sub-updater.service"
 
 PV = "0.0.1+git${SRCPV}"
 SRCREV = "${AUTOREV}"
