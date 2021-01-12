@@ -55,6 +55,7 @@ build:client:
 
 test:integration:
   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+  stage: test
   extends: .test
   needs: ["build:client"]
   dependencies:
