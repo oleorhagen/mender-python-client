@@ -35,6 +35,7 @@ build:client:
     - mender-qa-slave-highcpu
   before_script:
     # Export required yocto-build script variables
+    - mkdir -p stage-artifacts
     - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
     - chown -R mender:mender ${WORKSPACE}
     # Enable nesting VMs
@@ -47,9 +48,25 @@ build:client:
     - chown -R mender:mender ${WORKSPACE}
     - export HOME="/home/mender"
     - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
+  artifacts:
+    expire_in: 1w
+    paths:
+      - stage-artifacts/
+
+test:integration:
+  image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+  extends: .test
+  needs: ["build:client"]
+  dependencies:
+      - build:client
+  before_script:
+      - docker load stage-artifacts/mender-client-qemu.tar
+      - cd tests/integration
+      - ./run.sh test_python_api_client::test_update_successful
 
 
 .test:
+    needs: []
     cache:
         key: ${CI_COMMIT_REF_SLUG}
         paths:

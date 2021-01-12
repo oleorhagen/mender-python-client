@@ -23,5 +23,9 @@ EOF
 fi
 
 export LANG=en_US.UTF-8
-bitbake mender-python-client
-# bitbake core-image-full-cmdline
+# bitbake mender-python-client
+bitbake core-image-full-cmdline
+
+../meta-mender/meta-mender-qemu/docker/build-docker qemux86-64 -t mendersoftware/mender-client-qemu:master
+
+docker save mendersoftware/mender-client-qemu:master -o stage-artifacts/mender-client-qemu.tar
