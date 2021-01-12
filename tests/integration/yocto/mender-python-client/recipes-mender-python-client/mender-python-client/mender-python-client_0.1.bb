@@ -40,17 +40,22 @@ RDEPENDS_${PN} += "python3-core \
 
 do_install_append () {
 
-    bbwarn Installing the mender-python-client.service file
     install -d ${D}${systemd_unitdir}/system
     install -m 644 ${S}/support/mender-python-client.service ${D}${systemd_unitdir}/system
-}
 
-
-do_install_systemd() {
     install -d ${D}${bindir}
     install -m 0755 ${WORKDIR}/mender-sub-updater ${D}${bindir}/mender-sub-updater
     install -d ${D}${systemd_unitdir}/system
     bbwarn Installing the mender-sub-updater.service file
-    install -m 644 ${WORKDIR}/mender-sub-updater.service ${D}${systemd_unitdir}/system
+    install -m 0644 ${WORKDIR}/mender-sub-updater.service ${D}${systemd_unitdir}/system
 }
-addtask do_install_systemd after do_install before do_package
+
+
+# do_install_service_files() {
+#     install -d ${D}${bindir}
+#     install -m 0755 ${WORKDIR}/mender-sub-updater ${D}${bindir}/mender-sub-updater
+#     install -d ${D}${systemd_unitdir}/system
+#     bbwarn Installing the mender-sub-updater.service file
+#     install -m 0644 ${WORKDIR}/mender-sub-updater.service ${D}${systemd_unitdir}/system
+# }
+# addtask do_install_service_files after do_install before do_package
