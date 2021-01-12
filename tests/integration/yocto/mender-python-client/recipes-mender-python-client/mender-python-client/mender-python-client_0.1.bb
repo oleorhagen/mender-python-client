@@ -13,7 +13,7 @@ LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=f45908b2c92866a1973f8fba5318cd70"
 
 # TODO - Change to master branch
-SRC_URI = "git@github.com:oleorhagen/mender-python-client.git;protocol=https;branch=develop"
+SRC_URI = "git://github.com/oleorhagen/mender-python-client;protocol=https;branch=develop"
 
 SRC_URI_append = " \
     file:///builds/project-0/yocto/mender-python-client/recipes-mender-python-client/mender-python-client/files/mender-sub-updater \
