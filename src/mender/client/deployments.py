@@ -13,7 +13,11 @@
 #    limitations under the License.
 import logging as log
 from typing import Optional
+from typing import Dict
 import os.path
+import time
+import re
+
 import requests
 
 import mender.settings.settings as settings
@@ -23,6 +27,13 @@ from mender.client import HTTPUnathorized
 STATUS_SUCCESS = "success"
 STATUS_FAILURE = "failure"
 STATUS_DOWNLOADING = "downloading"
+
+DOWNLOAD_RESUME_MIN_INTERVAL = 60
+DOWNLOAD_RESUME_MAX_INTERVAL = 10 * 60
+
+
+class DeploymentDownloadFailed(Exception):
+    pass
 
 
 class DeploymentInfo:
@@ -86,6 +97,68 @@ def request(
     return deployment_info
 
 
+def get_exponential_backoff_time(tried: int, max_interval: int) -> int:
+    per_internal_attempts = 3
+    smallest_unit = DOWNLOAD_RESUME_MIN_INTERVAL
+
+    interval = smallest_unit
+    next_interval = interval
+    for count in range(0, tried + 1, per_internal_attempts):
+        interval = next_interval
+        next_interval *= 2
+        if interval >= max_interval:
+            if tried - count >= per_internal_attempts:
+                raise DeploymentDownloadFailed(
+                    f"Max tries exceeded: tries {tried} max_interval {max_interval}"
+                )
+            if max_interval < smallest_unit:
+                return smallest_unit
+            return max_interval
+
+    return interval
+
+
+header_range_regex = re.compile(r"^bytes ([0-9]+)-([0-9]+)/(:?[0-9]+)?")
+
+
+def parse_range_response(response: requests.Response, offset: int) -> bool:
+    if response.status_code != requests.status_codes.codes["partial_content"]:
+        return False
+
+    h_range_str = str(response.headers.get("Content-Range"))
+    log.debug(f"Content-Range received from server: '{h_range_str}'")
+
+    match = header_range_regex.match(h_range_str)
+    if not match:
+        raise DeploymentDownloadFailed(
+            f"Cannot match Content-Range header: '{h_range_str}'"
+        )
+
+    new_offset = int(match.group(1))
+    log.debug(
+        f"Successfully parsed '{h_range_str}', new_offset {new_offset}, offset {offset},"
+    )
+
+    if new_offset > offset:
+        raise DeploymentDownloadFailed(
+            f"Missing data. Got Content-Range header: '{h_range_str}'"
+        )
+
+    if new_offset < offset:
+        log.debug(f"Discarding {offset-new_offset} bytes")
+        size_to_discard = offset - new_offset
+        while size_to_discard > 0:
+            chunk_size = 1024 * 1024
+            if size_to_discard < chunk_size:
+                chunk_size = size_to_discard
+            log.debug(f"Discarding chunk of  {chunk_size    } bytes")
+            for _ in response.iter_content(chunk_size=chunk_size):
+                size_to_discard -= chunk_size
+                break
+
+    return True
+
+
 def download(
     deployment_data: DeploymentInfo, artifact_path: str, server_certificate: str
 ) -> bool:
@@ -93,32 +166,87 @@ def download(
     if not artifact_path:
         log.error("No path provided in which to store the Artifact")
         return False
-    update_url = deployment_data.artifact_uri
     log.info(f"Downloading Artifact: {artifact_path}")
     try:
-        with requests.get(
-            update_url,
-            stream=True,
-            verify=server_certificate if server_certificate else True,
-        ) as response:
-            with open(artifact_path, "wb") as fh:
-                for data in response.iter_content(
-                    chunk_size=1024 * 1024
-                ):  # 1MiB at a time
-                    if not data:
-                        break
-                    fh.write(data)
-                    fh.flush()
-    except (
-        requests.RequestException,
-        requests.ConnectionError,
-        requests.URLRequired,
-        requests.TooManyRedirects,
-        requests.Timeout,
-    ) as e:
+        return download_and_resume(deployment_data, artifact_path, server_certificate)
+    except DeploymentDownloadFailed as e:
         log.error(e)
         return False
-    return True
+
+
+def download_and_resume(
+    deployment_data: DeploymentInfo, artifact_path: str, server_certificate: str
+) -> bool:
+    """Download the update artifact to the artifact_path"""
+    if not artifact_path:
+        log.error("No path provided in which to store the Artifact")
+        return False
+
+    update_url = deployment_data.artifact_uri
+    log.info(f"Downloading Artifact: {artifact_path}")
+    with open(artifact_path, "wb") as fh:
+        # Truncate file, if exists
+        pass
+
+    # Loop  will try/except until download is complete or exhaust the retries
+    offset = 0
+    content_length = None
+    tried = 0
+    while True:
+        try:
+            req_headers: Dict[str, str] = {}
+            if content_length:
+                req_headers["Range"] = f"bytes={offset}-"
+                log.debug(f"Request with headers {req_headers}")
+            with requests.get(
+                update_url,
+                headers=req_headers,
+                stream=True,
+                verify=server_certificate if server_certificate else True,
+            ) as response:
+                if not content_length:
+                    content_length = int(str(response.headers.get("Content-Length")))
+                    log.debug(f"content_length: {content_length}")
+                if "Range" in req_headers:
+                    if not parse_range_response(response, offset):
+                        log.debug("Server ignored our range request, resetting offset")
+                        offset = 0
+                log.debug(f"Opening file to write at offset {offset}")
+                with open(artifact_path, "rb+") as fh:
+                    fh.seek(offset)
+                    for data in response.iter_content(
+                        chunk_size=1024 * 1024
+                    ):  # 1MiB at a time
+                        if not data:
+                            break
+                        fh.write(data)
+                        offset += len(data)
+                        fh.flush()
+                # Download completed in one go, return
+                log.debug(f"Got EOF. Wrote {offset} bytes. Total is {content_length}.")
+                if offset >= content_length:
+                    return True
+        except (
+            requests.RequestException,
+            requests.ConnectionError,
+            requests.URLRequired,
+            requests.TooManyRedirects,
+            requests.Timeout,
+        ) as e:
+            log.error(e)
+            log.debug(f"Got Error. Wrote {offset} bytes. Total is {content_length}.")
+
+        # Prepare for next attempt
+        next_attempt_in = get_exponential_backoff_time(
+            tried, DOWNLOAD_RESUME_MAX_INTERVAL
+        )
+        tried += 1
+        log.debug(f"Next attempt in {next_attempt_in} seconds, sleeping...")
+        time.sleep(next_attempt_in)
+        log.debug("Resuming!")
+
+    log.debug(f"Download complete. Wrote {offset} bytes. Total is {content_length}.")
+    return offset >= content_length
 
 
 def report(
