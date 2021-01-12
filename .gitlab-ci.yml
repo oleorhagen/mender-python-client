@@ -59,6 +59,8 @@ build:client:
 test:integration:
   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
   stage: test
+  services:
+    - docker:19.03-dind
   extends: .test
   needs:
       - build:client
