@@ -57,36 +57,87 @@ include:
 #       - stage-artifacts/
 
 
+# test:integration:
+#   variables:
+#       GIT_SUBMODULE_STRATEGY: recursive
+#   stage: test
+#   image: docker/compose:alpine-1.27.4
+#   services:
+#     - docker:19.03-dind
+#   tags:
+#     - mender-qa-slave-highcpu
+#   # needs:
+#   #     - build:client
+#   # dependencies:
+#   #     - build:client
+#   before_script:
+#     - apk --update add bash git py-pip gcc make python2-dev
+#       libc-dev libffi-dev openssl-dev python3 curl jq sysstat
+#     - pip3 install pyyaml
+#     - pip3 install -r requirements.txt
+#     - apk --update add xz libc6-compat
+#     # Install mender-artifact
+#     - wget https://downloads.mender.io/mender-artifact/3.4.0/linux/mender-artifact
+#     - chmod +x ./mender-artifact
+#     - mv ./mender-artifact /usr/bin
+#     - mender-artifact --version
+#     # - docker version
+#     # - docker load -i stage-artifacts/mender-client-qemu.tar
+#   script:
+#     - echo Running the integration tests...
+#     - cd tests/integration
+#     - ls mender_integration
+#     - ./run.sh test_python_api_client.py::test_update_successful
+
+
 test:integration:
-  variables:
-      GIT_SUBMODULE_STRATEGY: recursive
   stage: test
-  image: docker/compose:alpine-1.27.4
-  services:
-    - docker:19.03-dind
+  # Integration tests depends on running ssh to containers, we're forced to
+  # run dockerd on the same host.
+  image: docker:19.03-dind
+  # variables:
+  #   DOCKER_CLIENT_TIMEOUT: 300
+  #   COMPOSE_HTTP_TIMEOUT: 300
   tags:
     - mender-qa-slave-highcpu
-  # needs:
-  #     - build:client
-  # dependencies:
-  #     - build:client
   before_script:
-    - apk --update add bash git py-pip python3 xz libc6-compat
-    - pip3 install pyyaml
-    - pip3 install -r requirements.txt
+    - unset DOCKER_HOST
+    - unset DOCKER_TLS_VERIFY
+    - unset DOCKER_CERT_PATH
+
+    # for Post job status
+    - apk --update add curl jq sysstat docker-compose hdparm
     - apk --update add xz libc6-compat
+
+    - apk --update add bash git py-pip gcc make python2-dev
+      libc-dev libffi-dev openssl-dev python3 curl jq sysstat
+    - pip3 install pyyaml
+
     # Install mender-artifact
     - wget https://downloads.mender.io/mender-artifact/3.4.0/linux/mender-artifact
     - chmod +x ./mender-artifact
     - mv ./mender-artifact /usr/bin
     - mender-artifact --version
-    # - docker version
-    # - docker load -i stage-artifacts/mender-client-qemu.tar
+
+    # Start dockerd in the background
+    - /usr/local/bin/dockerd &
+    # Wait for dockerd to start
+    - |-
+      MAX_WAIT=30
+      while [ ! -e "/var/run/docker.sock" ] && [ $MAX_WAIT -gt 0 ]; do
+        MAX_WAIT=$(($MAX_WAIT - 1))
+        sleep 1
+      done
+    - pip3 install pytest requests
+    - docker version # Verify that the docker server is up and running
+
+
   script:
     - echo Running the integration tests...
     - cd tests/integration
     - ls mender_integration
     - ./run.sh test_python_api_client.py::test_update_successful
+
 
 
 # .test:
