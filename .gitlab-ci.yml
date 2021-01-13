@@ -29,32 +29,32 @@ include:
     file: '.gitlab-ci-check-python3-format.yml'
 
 
-# build:client:
-#   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
-#   stage: build
-#   services:
-#     - docker:19.03-dind
-#   tags:
-#     - mender-qa-slave-highcpu
-#   before_script:
-#     # Export required yocto-build script variables
-#     - mkdir -p stage-artifacts
-#     - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
-#     - chown -R mender:mender ${WORKSPACE}
-#     # Enable nesting VMs
-#     - modprobe -r kvm_intel && modprobe kvm_intel nested=Y
-#     # Enable NFS cache for yocto
-#     - mount.nfs4 ${SSTATE_CACHE_INTRNL_ADDR}:/sstate-cache /mnt/sstate-cache
-#   script:
-#     - mkdir -p ${WORKSPACE}
-#     - cd ${WORKSPACE}
-#     - chown -R mender:mender ${WORKSPACE}
-#     - export HOME="/home/mender"
-#     - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
-#   artifacts:
-#     expire_in: 1w
-#     paths:
-#       - stage-artifacts/
+build:client:
+  image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+  stage: build
+  services:
+    - docker:19.03-dind
+  tags:
+    - mender-qa-slave-highcpu
+  before_script:
+    # Export required yocto-build script variables
+    - mkdir -p stage-artifacts
+    - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
+    - chown -R mender:mender ${WORKSPACE}
+    # Enable nesting VMs
+    - modprobe -r kvm_intel && modprobe kvm_intel nested=Y
+    # Enable NFS cache for yocto
+    - mount.nfs4 ${SSTATE_CACHE_INTRNL_ADDR}:/sstate-cache /mnt/sstate-cache
+  script:
+    - mkdir -p ${WORKSPACE}
+    - cd ${WORKSPACE}
+    - chown -R mender:mender ${WORKSPACE}
+    - export HOME="/home/mender"
+    - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
+  artifacts:
+    expire_in: 1w
+    paths:
+      - stage-artifacts/
 
 
 # test:integration:
@@ -102,6 +102,10 @@ test:integration:
   #   COMPOSE_HTTP_TIMEOUT: 300
   tags:
     - mender-qa-slave-highcpu
+  needs:
+      - build:client
+  dependencies:
+      - build:client
   before_script:
     - unset DOCKER_HOST
     - unset DOCKER_TLS_VERIFY
