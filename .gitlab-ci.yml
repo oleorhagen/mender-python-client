@@ -29,32 +29,32 @@ include:
     file: '.gitlab-ci-check-python3-format.yml'
 
 
-build:client:
-  image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
-  stage: build
-  services:
-    - docker:19.03-dind
-  tags:
-    - mender-qa-slave-highcpu
-  before_script:
-    # Export required yocto-build script variables
-    - mkdir -p stage-artifacts
-    - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
-    - chown -R mender:mender ${WORKSPACE}
-    # Enable nesting VMs
-    - modprobe -r kvm_intel && modprobe kvm_intel nested=Y
-    # Enable NFS cache for yocto
-    - mount.nfs4 ${SSTATE_CACHE_INTRNL_ADDR}:/sstate-cache /mnt/sstate-cache
-  script:
-    - mkdir -p ${WORKSPACE}
-    - cd ${WORKSPACE}
-    - chown -R mender:mender ${WORKSPACE}
-    - export HOME="/home/mender"
-    - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
-  artifacts:
-    expire_in: 1w
-    paths:
-      - stage-artifacts/
+# build:client:
+#   image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+#   stage: build
+#   services:
+#     - docker:19.03-dind
+#   tags:
+#     - mender-qa-slave-highcpu
+#   before_script:
+#     # Export required yocto-build script variables
+#     - mkdir -p stage-artifacts
+#     - export WORKSPACE=$(realpath ${CI_PROJECT_DIR}/..)
+#     - chown -R mender:mender ${WORKSPACE}
+#     # Enable nesting VMs
+#     - modprobe -r kvm_intel && modprobe kvm_intel nested=Y
+#     # Enable NFS cache for yocto
+#     - mount.nfs4 ${SSTATE_CACHE_INTRNL_ADDR}:/sstate-cache /mnt/sstate-cache
+#   script:
+#     - mkdir -p ${WORKSPACE}
+#     - cd ${WORKSPACE}
+#     - chown -R mender:mender ${WORKSPACE}
+#     - export HOME="/home/mender"
+#     - sudo -E -u mender ${CI_PROJECT_DIR}/tests/integration/yocto/build-script
+#   artifacts:
+#     expire_in: 1w
+#     paths:
+#       - stage-artifacts/
 
 
 test:integration:
@@ -66,10 +66,10 @@ test:integration:
     - docker:19.03-dind
   tags:
     - mender-qa-slave-highcpu
-  needs:
-      - build:client
-  dependencies:
-      - build:client
+  # needs:
+  #     - build:client
+  # dependencies:
+  #     - build:client
   before_script:
     - apk --update add bash git py-pip python3 xz libc6-compat
     - pip3 install pyyaml pytest
@@ -79,8 +79,8 @@ test:integration:
     - chmod +x ./mender-artifact
     - mv ./mender-artifact /usr/bin
     - mender-artifact --version
-    - docker version
-    - docker load -i stage-artifacts/mender-client-qemu.tar
+    # - docker version
+    # - docker load -i stage-artifacts/mender-client-qemu.tar
   script:
     - echo Running the integration tests...
     - cd tests/integration
@@ -88,43 +88,43 @@ test:integration:
     - ./run.sh test_python_api_client.py::test_update_successful
 
 
-.test:
-    needs: []
-    cache:
-        key: ${CI_COMMIT_REF_SLUG}
-        paths:
-            - ~/.cache/pip-test/
+# .test:
+#     needs: []
+#     cache:
+#         key: ${CI_COMMIT_REF_SLUG}
+#         paths:
+#             - ~/.cache/pip-test/
 
-test:runtime:
-    extends: .test
-    stage: test
-    image: python:3.6-buster
-    before_script:
-        - mkdir -p /var/lib/mender/inventory
-        - mkdir -p /etc/mender
-        - cp support/* /var/lib/mender/inventory/
-        - pip install --cache-dir=~/.cache/pip-test/ .
-    script:
-        - mender-python-client bootstrap
+# test:runtime:
+#     extends: .test
+#     stage: test
+#     image: python:3.6-buster
+#     before_script:
+#         - mkdir -p /var/lib/mender/inventory
+#         - mkdir -p /etc/mender
+#         - cp support/* /var/lib/mender/inventory/
+#         - pip install --cache-dir=~/.cache/pip-test/ .
+#     script:
+#         - mender-python-client bootstrap
 
-test:static:
-    extends: .test
-    stage: test
-    image: python:3.6-buster
-    before_script:
-        - pip install --cache-dir=~/.cache/pip-test mypy
-        - pip install --cache-dir=~/.cache/pip-test pylint
-        - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
-    script:
-        - mypy src
-        - pylint --rcfile=.pylintrc-develop src
+# test:static:
+#     extends: .test
+#     stage: test
+#     image: python:3.6-buster
+#     before_script:
+#         - pip install --cache-dir=~/.cache/pip-test mypy
+#         - pip install --cache-dir=~/.cache/pip-test pylint
+#         - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
+#     script:
+#         - mypy src
+#         - pylint --rcfile=.pylintrc-develop src
 
-test:unit:
-    extends: .test
-    stage: test
-    image: python:3.6-buster
-    before_script:
-        - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
-        - pip install --cache-dir=~/.cache/pip-test/ -e .
-    script:
-        - pytest --cov=src/mender tests/unit && coveralls
+# test:unit:
+#     extends: .test
+#     stage: test
+#     image: python:3.6-buster
+#     before_script:
+#         - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
+#         - pip install --cache-dir=~/.cache/pip-test/ -e .
+#     script:
+#         - pytest --cov=src/mender tests/unit && coveralls
