@@ -56,21 +56,36 @@ build:client:
     paths:
       - stage-artifacts/
 
+
 test:integration:
-  image: mendersoftware/mender-test-containers:mender-client-acceptance-testing
+  variables:
+      GIT_SUBMODULE_STRATEGY: recursive
   stage: test
+  image: docker/compose:alpine-1.27.4
   services:
     - docker:19.03-dind
-  extends: .test
+  tags:
+    - mender-qa-slave-highcpu
   needs:
       - build:client
   dependencies:
       - build:client
   before_script:
-      - docker load -i stage-artifacts/mender-client-qemu.tar
-      - cd tests/integration
+    - apk --update add bash git py-pip python3 xz libc6-compat
+    - pip3 install pyyaml pytest
+    - apk --update add xz libc6-compat
+    # Install mender-artifact
+    - wget https://downloads.mender.io/mender-artifact/3.4.0/linux/mender-artifact
+    - chmod +x ./mender-artifact
+    - mv ./mender-artifact /usr/bin
+    - mender-artifact --version
+    - docker version
+    - docker load -i stage-artifacts/mender-client-qemu.tar
   script:
-      - ./run.sh test_python_api_client::test_update_successful
+    - echo Running the integration tests...
+    - cd tests/integration
+    - ls mender_integration
+    - ./run.sh test_python_api_client.py::test_update_successful
 
 
 .test:
