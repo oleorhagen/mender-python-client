@@ -16,6 +16,7 @@ from os import path
 import sys
 
 import logging
+import subprocess
 
 logging.getLogger("requests").setLevel(logging.CRITICAL)
 logging.getLogger("paramiko").setLevel(logging.CRITICAL)
