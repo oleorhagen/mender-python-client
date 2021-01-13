@@ -15,6 +15,15 @@
 from os import path
 import sys
 
+import logging
+
+logging.getLogger("requests").setLevel(logging.CRITICAL)
+logging.getLogger("paramiko").setLevel(logging.CRITICAL)
+logging.getLogger("urllib3").setLevel(logging.CRITICAL)
+logging.getLogger("filelock").setLevel(logging.INFO)
+logger = logging.getLogger()
+
+
 sys.path += [path.join(path.dirname(__file__), "mender_integration")]
 
 def pytest_exception_interact(node, call, report):
