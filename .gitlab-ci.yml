@@ -72,7 +72,8 @@ test:integration:
   #     - build:client
   before_script:
     - apk --update add bash git py-pip python3 xz libc6-compat
-    - pip3 install pyyaml pytest
+    - pip3 install pyyaml
+    - pip3 install -r requirements.txt
     - apk --update add xz libc6-compat
     # Install mender-artifact
     - wget https://downloads.mender.io/mender-artifact/3.4.0/linux/mender-artifact
