@@ -113,6 +113,8 @@ test:integration:
 
     - apk --update add bash git py-pip gcc make python2-dev
       libc-dev libffi-dev openssl-dev python3 curl jq sysstat
+
+    - apk add $(cat tests/integration/mender_integration/tests/requirements/apk-requirements.txt)
     - pip3 install -r tests/integration/mender_integration/tests/requirements/python-requirements.txt
 
     # Install mender-artifact
