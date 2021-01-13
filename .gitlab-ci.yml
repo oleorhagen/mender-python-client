@@ -139,6 +139,8 @@ test:integration:
     - pip3 install pytest requests
     - docker version # Verify that the docker server is up and running
 
+    - docker load -i stage-artifacts/mender-client-qemu.tar
+
 
   script:
     - echo Running the integration tests...
