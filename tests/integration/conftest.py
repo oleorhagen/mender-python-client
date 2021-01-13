@@ -29,3 +29,9 @@ sys.path += [path.join(path.dirname(__file__), "mender_integration")]
 
 from mender_integration.tests.conftest import pytest_exception_interact
 
+
+def pytest_runtest_teardown(item, nextitem):
+    subprocess.run(["docker", "ps"])
+    cmd = "docker ps | grep client | awk '{print $1}'"
+    ret = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
+    subprocess.run(["docker", "logs", ret])
