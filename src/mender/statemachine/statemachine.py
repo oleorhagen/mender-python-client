@@ -17,6 +17,7 @@ import time
 
 import mender.bootstrap.bootstrap as bootstrap
 from mender.client import HTTPUnathorized
+from mender.util import timeutil
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
@@ -67,6 +68,13 @@ class Init(State):
             force_bootstrap=force_bootstrap, private_key_path=settings.PATHS.key
         )
         context.private_key = private_key
+        context.inventory_timer = timeutil.IsItTime(
+            context.config.InventoryPollIntervalSeconds
+        )
+        context.update_timer = timeutil.IsItTime(
+            context.config.UpdatePollIntervalSeconds
+        )
+        context.retry_timer = timeutil.IsItTime(context.config.RetryPollIntervalSeconds)
         log.debug(f"Init set context to: {context}")
         return context
 
@@ -115,9 +123,11 @@ class StateMachine:
 
 class Authorize(State):
     def run(self, context):
+        if not context.retry_timer.is_it_time():
+            return None
+
         log.info("Authorizing...")
         log.debug(f"Current context: {context}")
-        time.sleep(3)
         return authorize.request(
             context.config.ServerURL,
             context.config.TenantToken,
@@ -130,7 +140,7 @@ class Authorize(State):
 class Idle(State):
     def run(self, context):
         log.info("Idling...")
-        time.sleep(10)
+        timeutil.sleep(context.retry_timer)
         return True
 
 
@@ -179,6 +189,9 @@ class AuthorizedStateMachine(StateMachine):
 
 class SyncInventory(State):
     def run(self, context):
+        if not context.inventory_timer.is_it_time():
+            return
+
         log.info("Syncing the inventory...")
         inventory_data = inventory.aggregate(
             settings.PATHS.inventory_scripts,
@@ -195,11 +208,13 @@ class SyncInventory(State):
             )
         else:
             log.info("No inventory data found")
-        time.sleep(1)
 
 
 class SyncUpdate(State):
     def run(self, context):
+        if not context.update_timer.is_it_time():
+            return False
+
         log.info("Checking for updates...")
         device_type = devicetype.get(settings.PATHS.device_type)
         artifact_name = artifactinfo.get(settings.PATHS.artifact_info)
@@ -214,7 +229,6 @@ class SyncUpdate(State):
             context.deployment = deployment
             context.deployment_log_handler.enable()
             return True
-        time.sleep(2)
         return False
 
 
@@ -228,6 +242,7 @@ class IdleStateMachine(AuthorizedStateMachine):
             if SyncUpdate().run(context):
                 # Update available
                 return
+            timeutil.sleep(context.update_timer, context.inventory_timer)
 
 
 #
