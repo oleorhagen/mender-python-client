@@ -199,7 +199,7 @@ class SyncInventory(State):
             settings.PATHS.artifact_info,
         )
         if inventory_data:
-            log.debug(f"aggreated inventory data: {inventory_data}")
+            log.debug(f"aggregated inventory data: {inventory_data}")
             client_inventory.request(
                 context.config.ServerURL,
                 context.JWT,
