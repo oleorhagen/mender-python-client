@@ -60,39 +60,6 @@ build:client:
       - stage-artifacts/
 
 
-# test:integration:
-#   variables:
-#       GIT_SUBMODULE_STRATEGY: recursive
-#   stage: test
-#   image: docker/compose:alpine-1.27.4
-#   services:
-#     - docker:19.03-dind
-#   tags:
-#     - mender-qa-slave-highcpu
-#   # needs:
-#   #     - build:client
-#   # dependencies:
-#   #     - build:client
-#   before_script:
-#     - apk --update add bash git py-pip gcc make python2-dev
-#       libc-dev libffi-dev openssl-dev python3 curl jq sysstat
-#     - pip3 install pyyaml
-#     - pip3 install -r requirements.txt
-#     - apk --update add xz libc6-compat
-#     # Install mender-artifact
-#     - wget https://downloads.mender.io/mender-artifact/3.4.0/linux/mender-artifact
-#     - chmod +x ./mender-artifact
-#     - mv ./mender-artifact /usr/bin
-#     - mender-artifact --version
-#     # - docker version
-#     # - docker load -i stage-artifacts/mender-client-qemu.tar
-#   script:
-#     - echo Running the integration tests...
-#     - cd tests/integration
-#     - ls mender_integration
-#     - ./run.sh test_python_api_client.py::test_update_successful
-
-
 test:integration:
   stage: test
   # Integration tests depends on running ssh to containers, we're forced to
@@ -153,43 +120,43 @@ test:integration:
 
 
 
-# .test:
-#     needs: []
-#     cache:
-#         key: ${CI_COMMIT_REF_SLUG}
-#         paths:
-#             - ~/.cache/pip-test/
+.test:
+    needs: []
+    cache:
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - ~/.cache/pip-test/
 
-# test:runtime:
-#     extends: .test
-#     stage: test
-#     image: python:3.6-buster
-#     before_script:
-#         - mkdir -p /var/lib/mender/inventory
-#         - mkdir -p /etc/mender
-#         - cp support/* /var/lib/mender/inventory/
-#         - pip install --cache-dir=~/.cache/pip-test/ .
-#     script:
-#         - mender-python-client bootstrap
+test:runtime:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - mkdir -p /var/lib/mender/inventory
+        - mkdir -p /etc/mender
+        - cp support/* /var/lib/mender/inventory/
+        - pip install --cache-dir=~/.cache/pip-test/ .
+    script:
+        - mender-python-client bootstrap
 
-# test:static:
-#     extends: .test
-#     stage: test
-#     image: python:3.6-buster
-#     before_script:
-#         - pip install --cache-dir=~/.cache/pip-test mypy
-#         - pip install --cache-dir=~/.cache/pip-test pylint
-#         - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
-#     script:
-#         - mypy src
-#         - pylint --rcfile=.pylintrc-develop src
+test:static:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - pip install --cache-dir=~/.cache/pip-test mypy
+        - pip install --cache-dir=~/.cache/pip-test pylint
+        - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
+    script:
+        - mypy src
+        - pylint --rcfile=.pylintrc-develop src
 
-# test:unit:
-#     extends: .test
-#     stage: test
-#     image: python:3.6-buster
-#     before_script:
-#         - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
-#         - pip install --cache-dir=~/.cache/pip-test/ -e .
-#     script:
-#         - pytest --cov=src/mender tests/unit && coveralls
+test:unit:
+    extends: .test
+    stage: test
+    image: python:3.6-buster
+    before_script:
+        - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
+        - pip install --cache-dir=~/.cache/pip-test/ -e .
+    script:
+        - pytest --cov=src/mender tests/unit && coveralls
