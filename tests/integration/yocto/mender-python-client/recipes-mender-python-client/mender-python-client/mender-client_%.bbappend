@@ -1,4 +1,4 @@
-SYSTEMD_AUTO_ENABLE = "disable"
+SYSTEMD_AUTO_ENABLE_${PN} = "disable"
 
 FILES_${PN} += "${datadir}/mender/install \
                 /data/mender/device_type"
