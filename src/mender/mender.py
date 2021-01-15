@@ -18,6 +18,7 @@ import sys
 import mender.bootstrap.bootstrap as bootstrap
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
+import mender.log.log as menderlog
 import mender.settings.settings as settings
 import mender.statemachine.statemachine as statemachine
 
@@ -98,6 +99,7 @@ def report(args):
             deployment_id,
             context.config.ServerCertificate,
             jwt,
+            menderlog.DeploymentLogHandler(),
         ):
             log.error("Failed to report the update status to the Mender server")
             sys.exit(1)

@@ -122,7 +122,7 @@ def download(
 
 
 def report(
-    server_url: str, status: str, deployment_id: str, server_certificate: str, JWT: str
+        server_url: str, status: str, deployment_id: str, server_certificate: str, JWT: str, deployment_logger: Optional(menderlog.DeploymentLogHandler)
 ) -> bool:
     """Report update :param status to the Mender server"""
     if not status:
@@ -149,6 +149,12 @@ def report(
             menderlog.add_sub_updater_log(
                 os.path.join(settings.PATHS.deployment_log, "deployment.log")
             )
+            if deployment_logger:
+                logdata = deployment_logger.marshal()
+            else:
+                log.error("No deployment log handler given")
+                return True
+
             response = requests.put(
                 server_url
                 + "/api/devices/v1/deployments/device/deployments/"
@@ -157,14 +163,7 @@ def report(
                 headers=headers,
                 verify=server_certificate if server_certificate else True,
                 json={
-                    "messages": [
-                        # Dummy data
-                        {
-                            "timestamp": "2016-03-11T13:03:17.063493443Z",
-                            "level": "INFO",
-                            "message": "OK",
-                        }
-                    ]
+                    "messages": logdata,
                 },
             )
             if response.status_code != 204:
