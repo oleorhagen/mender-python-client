@@ -21,6 +21,7 @@ cp ${script_dir}/{bblayers,local}.conf ./conf
 if [ -d /mnt/sstate-cache ]; then
   cat >> ./conf/local.conf <<EOF
 SSTATE_DIR = "/mnt/sstate-cache"
+SYSTEMD_AUTO_ENABLE_pn-mender-client = "disable"
 EOF
 fi
 
