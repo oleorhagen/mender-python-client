@@ -277,7 +277,7 @@ def report(
             return False
         if status == STATUS_FAILURE:
             menderlog.add_sub_updater_log(
-                os.path.join(settings.PATHS.deployment_log, "deployment.log")
+                os.path.join(settings.PATHS.data_store, "sub-updater.log")
             )
             if deployment_logger:
                 logdata = deployment_logger.marshal()
