@@ -294,6 +294,17 @@ class ArtifactRollbackReboot(State):
 class ArtifactFailure(State):
     def run(self, context):
         log.info("Running the ArtifactFailure state...")
+        if not deployments.report(
+            context.config.ServerURL,
+            deployments.STATUS_FAILURE,
+            context.deployment.ID,
+            context.config.ServerCertificate,
+            context.JWT,
+            context.deployment_log_handler,
+        ):
+            log.error(
+                "Failed to report the deployment status 'failure' to the Mender server"
+            )
         return _UpdateDone()
 
 

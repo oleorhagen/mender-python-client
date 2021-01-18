@@ -12,7 +12,6 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import re
 import os
 import hashlib
 
@@ -134,8 +133,8 @@ class TestDeploymentsDownloadAndResume:
 
         assert deployments.download_and_resume(d_info, "/tmp/dummy", "")
 
-        with open("/tmp/dummy", "rb") as fd:
-            read_back = fd.read()
+        with open("/tmp/dummy", "rb") as fh:
+            read_back = fh.read()
 
         assert (
             hashlib.sha256(self.raw_data).hexdigest()
