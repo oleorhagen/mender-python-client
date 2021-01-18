@@ -266,7 +266,7 @@ class Download(State):
                 context.deployment.ID,
                 context.config.ServerCertificate,
                 context.JWT,
-                deployment_logger = None,
+                deployment_logger=None,
             ):
                 log.error(
                     "Failed to report the deployment status 'downloading' to the Mender server"
