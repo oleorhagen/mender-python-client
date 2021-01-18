@@ -35,12 +35,9 @@ class JSONFormatter(logging.Formatter):
     """
 
     def format(self, record) -> str:
-        print("Noo")
         level = record.levelname
         message = record.message
         timestamp = self.formatTime(record)
-        # print(record.asctime)
-        print(self.formatTime(record))
         return json.dumps({"level": level, "timestamp": timestamp, "message": message,})
 
 
@@ -51,17 +48,13 @@ class DeploymentLogHandler(logging.FileHandler):
         filename = os.path.join(self.log_dir, "deployment.log")
         self.log_file = filename
         super().__init__(filename=filename)
-        print(super(logging.FileHandler))
         super().setFormatter(JSONFormatter())
 
     def handle(self, record):
-        print(f"Handling... {record}")
         if self.enabled:
-            print(f"Handling enabled... {record}")
             super(logging.FileHandler, self).handle(record)
 
     def enable(self):
-        print("Enabled..")
         self.enabled = True
         filename = os.path.join(self.log_dir, "deployment.log")
         # Reset the log
