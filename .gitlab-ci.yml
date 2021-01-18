@@ -137,6 +137,7 @@ test:runtime:
         - pip install --cache-dir=~/.cache/pip-test/ .
     script:
         - mender-python-client bootstrap
+        - export
 
 test:static:
     extends: .test
