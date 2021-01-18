@@ -11,7 +11,7 @@ cd yocto
 git clone -b dunfell https://github.com/mendersoftware/poky
 git clone -b dunfell https://github.com/openembedded/meta-openembedded.git
 git clone -b dunfell https://github.com/mendersoftware/meta-mender.git
-cp -r ${script_dir}/mender-python-client .
+cp -r ${script_dir}/meta-mender-python-client .
 
 source poky/oe-init-build-env
 

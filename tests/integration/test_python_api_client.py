@@ -23,8 +23,18 @@ from mender_integration.tests.tests.common_update import update_image
 
 
 def test_update_successful(standard_setup_one_client_bootstrapped):
-    """Test that the Python API client successfully installs a new update with the
-original Mender-client as a sub-updater"""
+    """Test that the Python API client successfully installs a new update
+
+    This is done through running it in an image, with the original mender-client
+    installed, using it as the sub-updater agent, and letting it install the
+    Artifact through:
+
+    mender install <path-to-artifact>
+
+    In the sub-updater install script.
+
+    """
+
     update_image(
         standard_setup_one_client_bootstrapped.device,
         standard_setup_one_client_bootstrapped.get_virtual_network_host_ip(),
