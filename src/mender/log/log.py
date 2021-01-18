@@ -53,7 +53,7 @@ class DeploymentLogHandler(logging.FileHandler):
 
     def handle(self, record):
         if self.enabled:
-            super(logging.FileHandler, self).handle(record)
+            super().handle(record)
 
     def enable(self):
         self.enabled = True
