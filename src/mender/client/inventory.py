@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -51,7 +51,6 @@ def request(
         log.error(f"Failed to upload the inventory: {e}")
         return None
     log.debug(f"inventory response: {r}")
-    log.error(f"Error {r.reason}. code: {r.status_code}")
     if r.status_code != 200:
-        log.error(f"{r.json()}")
+        log.error(f"Got inventory response: {r.json()}")
     return None

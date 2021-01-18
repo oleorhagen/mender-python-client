@@ -125,7 +125,12 @@ def setup_log(args):
     handlers.append(syslogger)
     if args.log_file:
         handlers.append(log.FileHandler(args.log_file))
-    log.basicConfig(level=level, handlers=handlers)
+    log.basicConfig(
+        level=level,
+        datefmt="%Y-%m-%d %H:%M:%S",
+        format="%(asctime)s %(levelname)-8s %(message)s",
+        handlers=handlers,
+    )
     log.info(f"Log level set to {args.log_level}")
 
 
