@@ -115,7 +115,6 @@ test:integration:
   script:
     - echo Running the integration tests...
     - cd tests/integration
-    - ls mender_integration
     - ./run.sh test_python_api_client.py::test_update_successful
 
 
