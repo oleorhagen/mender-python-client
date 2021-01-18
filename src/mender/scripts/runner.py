@@ -33,5 +33,5 @@ def run_sub_updater(deployment_id: str) -> bool:
         )
         return True
     except subprocess.CalledProcessError as e:
-        log.error(f"Failed to run the install script '/var/lib/mender/install' {e}")
+        log.error(f"Failed to run the install script '/usr/share/mender/install' {e}")
     return False
