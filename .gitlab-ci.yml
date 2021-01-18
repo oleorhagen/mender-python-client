@@ -15,6 +15,7 @@ variables:
     LICENSE_HEADERS_IGNORE_FILES_REGEXP: '.*mender_integration.*'
 
 .test:
+    needs: []
     cache:
         key: ${CI_COMMIT_REF_SLUG}
         paths:
@@ -39,10 +40,13 @@ test:static:
     before_script:
         - pip install --cache-dir=~/.cache/pip-test mypy
         - pip install --cache-dir=~/.cache/pip-test pylint
+        - pip install --cache-dir=~/.cache/pip-test .
         - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
+        - pip install --cache-dir=~/.cache/pip-test -r tests/unit/requirements.txt
     script:
         - mypy src
         - pylint --rcfile=.pylintrc-develop src
+        - pylint --rcfile=.pylintrc-develop --disable=no-self-use --disable=no-member --disable=too-many-ancestors tests/unit/test_*.py
 
 test:unit:
     extends: .test
@@ -50,6 +54,7 @@ test:unit:
     image: python:3.6-buster
     before_script:
         - pip install --cache-dir=~/.cache/pip-test/ -r requirements.txt
+        - pip install --cache-dir=~/.cache/pip-test -r tests/unit/requirements.txt
         - pip install --cache-dir=~/.cache/pip-test/ -e .
     script:
         - pytest --cov=src/mender tests/unit && coveralls
