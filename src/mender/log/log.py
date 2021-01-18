@@ -65,7 +65,7 @@ class DeploymentLogHandler(logging.FileHandler):
         self.enabled = True
         filename = os.path.join(self.log_dir, "deployment.log")
         # Reset the log
-        with open(filename, "w") as fh:
+        with open(filename, "w"):
             pass
 
     def disable(self):
@@ -78,8 +78,7 @@ class DeploymentLogHandler(logging.FileHandler):
             try:
                 data = json.loads(line)
                 logs.append(data)
-            except Exception as e:
-                # TODO - catch json exception
+            except json.JSONDecodeError as e:
                 log.error(f"Failed to marshal json, {e}")
         return logs
 
