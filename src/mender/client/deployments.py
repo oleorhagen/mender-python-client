@@ -122,7 +122,12 @@ def download(
 
 
 def report(
-        server_url: str, status: str, deployment_id: str, server_certificate: str, JWT: str, deployment_logger: Optional(menderlog.DeploymentLogHandler)
+    server_url: str,
+    status: str,
+    deployment_id: str,
+    server_certificate: str,
+    JWT: str,
+    deployment_logger: Optional(menderlog.DeploymentLogHandler),
 ) -> bool:
     """Report update :param status to the Mender server"""
     if not status:
@@ -162,9 +167,7 @@ def report(
                 + "/log",
                 headers=headers,
                 verify=server_certificate if server_certificate else True,
-                json={
-                    "messages": logdata,
-                },
+                json={"messages": logdata,},
             )
             if response.status_code != 204:
                 log.error(

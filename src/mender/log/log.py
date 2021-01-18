@@ -84,7 +84,6 @@ class DeploymentLogHandler(logging.FileHandler):
         return logs
 
 
-
 def add_sub_updater_log(log_file):
     try:
         with open(log_file) as fh:

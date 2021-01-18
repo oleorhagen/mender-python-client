@@ -19,7 +19,6 @@ import mender.security.rsa as rsa
 
 
 class TestSecurity:
-
     def test_generate_key(self):
         assert key.generate_key()
 
@@ -45,7 +44,10 @@ class TestSecurity:
         assert k
         sig = key.sign(k, "foobarbaz")
         assert sig
-        assert sig == "T9PoH8owesBFSaFxunhm7JOmrlTwKunjtL6ct8DvLptv/SHsJyS9bF8npLhWiCtX4PqjcfcP+v9U+yG2g7IC7/mB1hRZVsWqg2D4gA0Jxuq3oRvNyB5undL+c56C4OSd4aUU/Fq86hS4L9L9Fk7B0eIwZc7WEryDJyYNuDNMJ9CJS6ul1upw8d5rF3GNjveH24TnGrpvYf5RFcHujBP0MMWayM+2iCtkHr1JEy8BDTHukH1Wh/0VRtbJ4bx55H9YYFXaH7sDhs6vPejFVMtf95LfgxI+F55p3Iu90+Hb4uSC2fPUiJ90Rs5GHiu+RzhYQEy6/z4y5pQiQ/pJqyAjdNDU/9CGWzflZdNjk3GKnY6Uic7XNphTACAxDTFWrdYrRTMOY8ovFd+/LFkU2D8Kynx9h7LwRbsD90hR98Mk97prTZCXsRQOAy5/uzMxNGlNe9zwLWDo6pn8oxFHbcV3h0Za9Q0lFep7kUF47pnXEiBg8x6sfLsMtgMSgo5ypRAn"
+        assert (
+            sig
+            == "T9PoH8owesBFSaFxunhm7JOmrlTwKunjtL6ct8DvLptv/SHsJyS9bF8npLhWiCtX4PqjcfcP+v9U+yG2g7IC7/mB1hRZVsWqg2D4gA0Jxuq3oRvNyB5undL+c56C4OSd4aUU/Fq86hS4L9L9Fk7B0eIwZc7WEryDJyYNuDNMJ9CJS6ul1upw8d5rF3GNjveH24TnGrpvYf5RFcHujBP0MMWayM+2iCtkHr1JEy8BDTHukH1Wh/0VRtbJ4bx55H9YYFXaH7sDhs6vPejFVMtf95LfgxI+F55p3Iu90+Hb4uSC2fPUiJ90Rs5GHiu+RzhYQEy6/z4y5pQiQ/pJqyAjdNDU/9CGWzflZdNjk3GKnY6Uic7XNphTACAxDTFWrdYrRTMOY8ovFd+/LFkU2D8Kynx9h7LwRbsD90hR98Mk97prTZCXsRQOAy5/uzMxNGlNe9zwLWDo6pn8oxFHbcV3h0Za9Q0lFep7kUF47pnXEiBg8x6sfLsMtgMSgo5ypRAn"
+        )
 
 
 class TestRSA:
