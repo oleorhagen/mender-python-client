@@ -21,6 +21,7 @@ import mender.settings.settings as settings
 
 
 class TestDeploymentLogger:
+
     @pytest.fixture(autouse=True)
     def setLogLevelINFO(self, caplog):
         """Set the log-level capture to info for all tests"""

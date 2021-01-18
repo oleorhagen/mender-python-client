@@ -16,6 +16,7 @@ import logging as log
 import logging.handlers
 import os
 import os.path
+from typing import List
 
 import mender.settings.settings as settings
 
@@ -64,15 +65,18 @@ class DeploymentLogHandler(logging.FileHandler):
     def disable(self):
         self.enabled = False
 
-    def marshal(self):
+    def marshal(self) -> List[str]:
         """Marshal the logs to the format required by the deployment endpoint"""
         logs = []
-        for line in open(self.log_file):
-            try:
-                data = json.loads(line)
-                logs.append(data)
-            except json.JSONDecodeError as e:
-                log.error(f"Failed to marshal json, {e}")
+        try:
+            for line in open(self.log_file):
+                try:
+                    data = json.loads(line)
+                    logs.append(data)
+                except json.JSONDecodeError as e:
+                    log.error(f"Failed to marshal json, {e}")
+        except FileNotFoundError:
+            log.error("The log file was not found at: {self.log_file}")
         return logs
 
 
