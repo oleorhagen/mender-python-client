@@ -18,7 +18,7 @@ import logging as log
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
-def aggregate(path=""):
+def aggregate(path: str) -> dict:
     """Runs the identity script in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
     log.info("Aggregating the device identity attributes...")
