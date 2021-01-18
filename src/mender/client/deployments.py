@@ -252,7 +252,7 @@ def report(
     deployment_id: str,
     server_certificate: str,
     JWT: str,
-    deployment_logger: Optional[menderlog.DeploymentLogHandler],
+    deployment_logger: Optional[menderlog.DeploymentLogHandler] = None,
 ) -> bool:
     """Report update :param status to the Mender server"""
     if not status:
