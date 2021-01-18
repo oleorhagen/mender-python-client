@@ -28,7 +28,7 @@ class IsItTime:
         return datetime.now() + timedelta(0, self.interval_seconds)
 
     def seconds_till_next(self):
-        return self.get_next().timestamp() - datetime.now().timestamp()
+        return self.next_trigger_at.timestamp() - datetime.now().timestamp()
 
     def is_it_time(self):
         if self.next_trigger_at <= datetime.now():
