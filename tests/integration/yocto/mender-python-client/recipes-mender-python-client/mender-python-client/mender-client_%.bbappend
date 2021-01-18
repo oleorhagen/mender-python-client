@@ -1,13 +1,16 @@
-SYSTEMD_AUTO_ENABLE = "disable"
+SYSTEMD_AUTO_ENABLE_${PN} = "disable"
 
 FILES_${PN} += "${datadir}/mender/install \
                 /data/mender/device_type"
 
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+SRC_URI_append = " file://mender.conf"
+
 do_install_append() {
-    if ${@bb.utils.contains('MENDER_FEATURES', 'mender-image', 'true', 'false', d)}; then
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'mender-image', 'true', 'false', d)}; then
         # symlink /var/lib/mender to /data/mender
-        rm -rf ${D}/${localstatedir}/lib/mender
-        ln -s /data/mender ${D}/${localstatedir}/lib/mender
+        # rm -rf ${D}/${localstatedir}/lib/mender
+        # ln -s /data/mender ${D}/${localstatedir}/lib/mender
 
         install -m 755 -d ${D}/data/mender
         install -m 444 ${B}/device_type ${D}/data/mender/
