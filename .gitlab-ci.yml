@@ -150,7 +150,7 @@ test:static:
     script:
         - mypy src
         - pylint --rcfile=.pylintrc-develop src
-        - pylint --rcfile=.pylintrc-develop tests/unit
+        - pylint --rcfile=.pylintrc-develop --disable=no-self-use tests/unit
 
 test:unit:
     extends: .test

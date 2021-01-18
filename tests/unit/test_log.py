@@ -11,10 +11,10 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import pytest
-import os.path
-import logging as testlogger
 import json
+import logging as testlogger
+import os.path
+import pytest
 
 import mender.log.log as mlog
 import mender.settings.settings as settings
@@ -23,7 +23,7 @@ import mender.settings.settings as settings
 class TestDeploymentLogger:
 
     @pytest.fixture(autouse=True)
-    def setLogLevelINFO(self, caplog):
+    def set_log_level_info(self, caplog):
         """Set the log-level capture to info for all tests"""
         caplog.set_level(testlogger.INFO)
 
@@ -49,9 +49,12 @@ class TestDeploymentLogger:
             data = json.loads(fh.read().strip())
             assert data["message"] == "BarBaz"
             assert data["level"] == "INFO"
+        assert "Foobar" in caplog.text
+        assert "BarBaz" in caplog.text
 
-    def test_log_marshalling(self, deployment_logger, caplog):
-        logger, log_file = deployment_logger
+
+    def test_log_marshalling(self, caplog, deployment_logger):
+        logger, _ = deployment_logger
         logger.enable()
         rootlogger = testlogger.getLogger("")
         rootlogger.addHandler(logger)
@@ -62,3 +65,6 @@ class TestDeploymentLogger:
         assert data[0]["level"] == "INFO"
         assert data[1]["message"] == "bar"
         assert data[1]["level"] == "ERROR"
+        # stream log
+        assert "foo" in caplog.text
+        assert "bar" in caplog.text
