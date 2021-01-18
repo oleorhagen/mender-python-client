@@ -88,6 +88,7 @@ def report(args):
             deployment_id,
             context.config.ServerCertificate,
             jwt,
+            deployment_logger=None,
         ):
             log.error("Failed to report the update status to the Mender server")
             sys.exit(1)
