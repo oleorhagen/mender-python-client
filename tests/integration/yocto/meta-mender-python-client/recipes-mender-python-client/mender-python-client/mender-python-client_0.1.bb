@@ -10,7 +10,10 @@ FILES_${PN}_append = " ${bindir}mender-sub-updater \
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=dcac2e5bf81a6fe99b034aaaaf1b2019"
 
-SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=master"
+MENDER_PYTHON_CLIENT_BUILD_BRANCH ?= "master"
+
+# SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=${MENDER_PYTHON_CLIENT_BUILD_BRANCH}"
+SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=/pull/11/head"
 
 SRC_URI_append = " \
     file://mender-sub-updater \
