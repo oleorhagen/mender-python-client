@@ -245,9 +245,6 @@ def download_and_resume(
         time.sleep(next_attempt_in)
         log.debug("Resuming!")
 
-    log.debug(f"Download complete. Wrote {offset} bytes. Total is {content_length}.")
-    return offset >= content_length
-
 
 def report(
     server_url: str,

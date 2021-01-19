@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -45,8 +45,6 @@ class ScriptKeyValueAggregator:
                 Script returned: {e.returncode}{errout}"
             )
             return {}
-        log.error("Unhandled error occurred in the script key-value aggregator")
-        return {}
 
     def collect(self, unique_keys: bool = False) -> Dict[str, List[str]]:
         with open(self.script_path) as fh:
