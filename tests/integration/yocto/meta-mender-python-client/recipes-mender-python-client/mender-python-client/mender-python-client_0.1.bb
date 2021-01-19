@@ -14,7 +14,7 @@ MENDER_PYTHON_CLIENT_BUILD_BRANCH ?= "master"
 
 # SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=${MENDER_PYTHON_CLIENT_BUILD_BRANCH}"
 # SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=/pull/11/head"
-SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=refs/pull/11/head"
+SRC_URI = "git://github.com/mendersoftware/mender-python-client;protocol=https;branch=${MENDER_PYTHON_CLIENT_BUILD_BRANCH}"
 
 
 SRC_URI_append = " \
