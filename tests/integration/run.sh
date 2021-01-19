@@ -17,4 +17,4 @@ mv output/* .
 rmdir output
 cp core-image-full-cmdline-qemux86-64.ext4 mender_integration/tests
 
-python -m pytest -v "$@"
+python3 -m pytest -v "$@"

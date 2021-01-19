@@ -1,4 +1,4 @@
 [submodule "mender_integration"]
 	path = tests/integration/mender_integration
-	url = git@github.com:mendersoftware/integration.git
+	url = https://github.com/mendersoftware/integration.git
 	branch = master
