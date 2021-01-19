@@ -17,4 +17,6 @@ mv output/* .
 rmdir output
 cp core-image-full-cmdline-qemux86-64.ext4 mender_integration/tests
 
+dd if=/dev/urandom of=broken_update.ext4 bs=10M count=5
+
 python3 -m pytest -v "$@"
