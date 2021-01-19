@@ -38,7 +38,7 @@ class JSONFormatter(logging.Formatter):
     def format(self, record) -> str:
         level = record.levelname
         message = record.message
-        timestamp = self.formatTime(record)
+        timestamp = self.formatTime(record, "%Y-%m-%dT%H:%M:%SZ")
         return json.dumps({"level": level, "timestamp": timestamp, "message": message,})
 
 
