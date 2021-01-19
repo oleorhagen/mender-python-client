@@ -28,7 +28,7 @@ fi
 # Build from the PR branch when building in Gitlab
 if [[ -n "${CI_COMMIT_REF_SLUG}" ]] && [[ "${CI_COMMIT_REF_SLUG}" = pr-* ]]; then
   cat >> ./conf/local.conf <<EOF
-MENDER_PYTHON_CLIENT_BUILD_BRANCH ?= "/refs/pull/${CI_COMMIT_REF_SLUG#pr-}/head;nobranch=1"
+MENDER_PYTHON_CLIENT_BUILD_BRANCH ?= "refs/pull/${CI_COMMIT_REF_SLUG#pr-}/head;nobranch=1"
 EOF
 fi
 
