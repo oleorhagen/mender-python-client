@@ -6,6 +6,12 @@
 
 MENDER_PYTHON_CLIENT_LOCKFILE=/var/lib/mender/update.lock
 
+rm -f /var/lib/mender/sub-updater.log
+
+msg () {
+  echo "$@" >> /var/lib/mender/sub-updater.log
+}
+
 program_present () {
   which "$1" || { echo "$1 not found in PATH"; exit 1; }
 }
@@ -15,10 +21,11 @@ program_present "mender-python-client"
 
 if [[ $# -eq 1 ]]; then
   ARTIFACT_PATH="$1"
-  mender install "${ARTIFACT_PATH}" || { ret=$?;\
-                                               echo >&2 "Failed to install the update...";\
-                                               mender-python-client report --failure && rm ${MENDER_PYTHON_CLIENT_LOCKFILE}
-                                               exit ${ret}; }
+  mender install "${ARTIFACT_PATH}" || \
+    { ret=$?;\
+      msg "Failed to install the update...";\
+      mender-python-client report --failure && rm ${MENDER_PYTHON_CLIENT_LOCKFILE}
+      exit ${ret}; }
   reboot
   exit 0
 else
@@ -26,7 +33,7 @@ else
   ret=$?
   case ${ret} in
     0)
-      echo >&2 "Update successful. Restarting the Mender-Python API client..."
+      msg "Update successful. Restarting the Mender-Python API client..."
       if mender-python-client report --success
       then
         rm ${MENDER_PYTHON_CLIENT_LOCKFILE}
@@ -36,11 +43,19 @@ else
       fi
       ;;
     2)
-      echo >&2 "No update is currently in progress..."
+      if [ -f ${MENDER_PYTHON_CLIENT_LOCKFILE} ]; then
+        msg "An update was seemingly in progress, and failed"
+        msg "Reporting error..."
+        mender-python-client report --failure || msg "Failed to report error"
+        rm ${MENDER_PYTHON_CLIENT_LOCKFILE}
+      fi
+
+
+      msg "No update is currently in progress..."
       exit 0
       ;;
     *)
-      echo >&2 "Unexpected 'mender commit' error code ${ret}"
+      msg "Unexpected 'mender commit' error code ${ret}"
       # TODO -- Report failure (?)
       exit 1
       ;;
