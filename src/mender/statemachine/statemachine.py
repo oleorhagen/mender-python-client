@@ -104,10 +104,15 @@ class StateMachine:
     def run(self, force_bootstrap=False):
         self.context = Init().run(self.context, force_bootstrap)
         log.debug(f"Initialized context: {self.context}")
-        deployment_log_handler = DeploymentLogHandler()
-        logger = log.getLogger("")
-        logger.addHandler(deployment_log_handler)
-        self.context.deployment_log_handler = deployment_log_handler
+        deployment_log_handler = [
+            handler
+            for handler in log.getLogger("").handlers
+            if isinstance(handler, DeploymentLogHandler)
+        ]
+        assert (
+            len(deployment_log_handler) == 1
+        ), "Something is wrong with the setup of the DeploymentLogHandler"
+        self.context.deployment_log_handler = deployment_log_handler[0]
         self.context.deployment_log_handler.disable()
         while True:
             self.unauthorized_machine.run(self.context)
