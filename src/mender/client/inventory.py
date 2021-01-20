@@ -52,5 +52,5 @@ def request(
         return None
     log.debug(f"inventory response: {r}")
     if r.status_code != 200:
-        log.error(f"Got inventory response: {r.json()}")
+        log.error(f"Got inventory response: {r.text}")
     return None
