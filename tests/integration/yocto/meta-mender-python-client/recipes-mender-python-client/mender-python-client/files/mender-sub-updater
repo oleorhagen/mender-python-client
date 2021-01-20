@@ -6,8 +6,6 @@
 
 MENDER_PYTHON_CLIENT_LOCKFILE=/var/lib/mender/update.lock
 
-rm -f /var/lib/mender/sub-updater.log
-
 msg () {
   echo "$@" >> /var/lib/mender/sub-updater.log
 }
