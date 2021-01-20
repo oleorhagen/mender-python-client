@@ -19,6 +19,8 @@ program_present () {
 program_present "mender"
 program_present "mender-python-client"
 
+sleep 90
+
 if [[ $# -eq 1 ]]; then
   ARTIFACT_PATH="$1"
   mender install "${ARTIFACT_PATH}" || \
