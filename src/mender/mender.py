@@ -96,14 +96,15 @@ def report(args):
             sys.exit(1)
     elif args.failure:
         log.info("Reporting a failed update to the Mender server")
-        deployment_log_handler = [
+        update_handlers = [
             handler
             for handler in log.getLogger("").handlers
             if isinstance(handler, DeploymentLogHandler)
         ]
         assert (
-            len(deployment_log_handler) == 1
+            len(update_handlers) == 1
         ), "Something is wrong with the setup of the DeploymentLogHandler"
+        deployment_log_handler = update_handlers[0]
         deployment_log_handler.enable()
         if not deployments.report(
             context.config.ServerURL,
@@ -111,7 +112,7 @@ def report(args):
             deployment_id,
             context.config.ServerCertificate,
             jwt,
-            menderlog.DeploymentLogHandler(),
+            deployment_log_handler,
         ):
             log.error("Failed to report the update status to the Mender server")
             sys.exit(1)
