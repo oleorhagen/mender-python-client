@@ -56,7 +56,6 @@ else
       ;;
     *)
       msg "Unexpected 'mender commit' error code ${ret}"
-      # TODO -- Report failure (?)
       exit 1
       ;;
   esac
