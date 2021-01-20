@@ -39,7 +39,7 @@ class JSONFormatter(logging.Formatter):
         level = record.levelname
         message = record.message
         timestamp = self.formatTime(record, "%Y-%m-%dT%H:%M:%SZ")
-        return json.dumps({"level": level, "timestamp": timestamp, "message": message,})
+        return json.dumps({"level": level, "timestamp": timestamp, "message": message})
 
 
 class DeploymentLogHandler(logging.FileHandler):
@@ -87,6 +87,6 @@ def add_sub_updater_log(log_file):
             log.info(f"Sub-updater-logs follows:\n{log_string}")
     except FileNotFoundError:
         log.error(
-            f"The log_file: {log_file} was not found.\
-            No logs from the sub-updater will be reported."
+            f"The log_file: {log_file} was not found."
+            + "No logs from the sub-updater will be reported."
         )
