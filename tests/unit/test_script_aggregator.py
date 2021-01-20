@@ -192,7 +192,7 @@ class TestIdentityAggregator:
             ),
         ],
     )
-    def test_identity(self, data, expected, caplog, file_create_fixture):
+    def test_identity(self, data, expected, file_create_fixture):
         tpath = file_create_fixture(data)
         identity_data = identity.aggregate(tpath)
         assert identity_data
