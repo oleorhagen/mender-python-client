@@ -63,7 +63,9 @@ def test_update_error(standard_setup_one_client_bootstrapped):
         standard_setup_one_client_bootstrapped.device,
         standard_setup_one_client_bootstrapped.get_virtual_network_host_ip(),
         install_image="broken_update.ext4",
+        # expected_log_message="Running the sub-updater script at /usr/share/mender/install",
         expected_log_message="An update was seemingly in progress, and failed",
+        expected_number_of_reboots=1,
     )
 
 
@@ -82,8 +84,5 @@ def test_deployment_logs():
         standard_setup_one_client_bootstrapped.get_virtual_network_host_ip(),
         install_image="broken_update.ext4",
         expected_log_message="Failed to run the install script",
+        expected_number_of_reboots=1,
     )
-
-
-# def test_download_resume():
-#     pass
