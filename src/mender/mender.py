@@ -18,7 +18,6 @@ import sys
 import mender.bootstrap.bootstrap as bootstrap
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
-import mender.log.log as menderlog
 import mender.settings.settings as settings
 import mender.statemachine.statemachine as statemachine
 
