@@ -252,7 +252,7 @@ def report(
     deployment_id: str,
     server_certificate: str,
     JWT: str,
-    deployment_logger: Optional[menderlog.DeploymentLogHandler],
+    deployment_logger: Optional[menderlog.DeploymentLogHandler] = None,
 ) -> bool:
     """Report update :param status to the Mender server"""
     if not status:
@@ -277,7 +277,7 @@ def report(
             return False
         if status == STATUS_FAILURE:
             menderlog.add_sub_updater_log(
-                os.path.join(settings.PATHS.deployment_log, "deployment.log")
+                os.path.join(settings.PATHS.data_store, "sub-updater.log")
             )
             if deployment_logger:
                 logdata = deployment_logger.marshal()
