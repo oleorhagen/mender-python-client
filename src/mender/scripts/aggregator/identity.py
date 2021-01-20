@@ -28,7 +28,7 @@ def aggregate(path: str) -> dict:
         if os.access(path, os.X_OK):
             identity_data = ScriptKeyValueAggregator(path).run()
         else:
-            log.error("The identity-script at {path} is not accessible")
+            log.error(f"The identity-script at {path} is not executable")
     else:
         log.error(f"{path} not found. No identity can be collected")
     log.debug(f"Aggregated identity data: {identity_data}")
