@@ -86,8 +86,10 @@ def add_sub_updater_log(log_file):
             log_string = fh.read()
             log.info(f"Sub-updater-logs follows:\n{log_string}")
     except FileNotFoundError:
-        log.error(
+        log_str = (
             "The log_file: %s was not found."
-            + "No logs from the sub-updater will be reported.",
-            log_file,
+            + "No logs from the sub-updater will be reported."
+        )
+        log.error(
+            log_str, log_file,
         )
