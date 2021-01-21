@@ -9,6 +9,10 @@ sed -e '/9000:9000/d' -e '/8080:8080/d' -e '/443:443/d' -e '/ports:/d' mender_in
 sed -e 's/DOWNLOAD_SPEED/#DOWNLOAD_SPEED/' -i mender_integration/docker-compose.testing.yml
 sed -e 's/ALLOWED_HOSTS: .*/ALLOWED_HOSTS: ~./' -i mender_integration/docker-compose.testing.yml
 
+# Workaround bug in master
+sed -e 's/mender-master/mender-2.4.x/' -i mender_integration/docker-compose.yml
+sed -e 's/master/2.4.x/' -i mender_integration/docker-compose.yml
+
 # Extract file system images from Docker images
 mkdir -p output
 docker run --rm --privileged --entrypoint /extract_fs -v $PWD/output:/output \
