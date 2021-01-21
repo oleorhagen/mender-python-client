@@ -34,4 +34,5 @@ def pytest_runtest_teardown(item, nextitem):
     subprocess.run(["docker", "ps"])
     cmd = "docker ps | grep client | awk '{print $1}'"
     ret = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
-    subprocess.run(["docker", "logs", ret])
+    subprocess.run(["docker", "exec", "-it", ret, "journalctl -u mender-python-client -a --output=cat"])
+    subprocess.run(["docker", "exec", "-it", ret, "journalctl -u mender-sub-updater -a --output=cat"])
