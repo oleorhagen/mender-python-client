@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import logging as log
 from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
-def aggregate(path=""):
+def aggregate(path: str) -> dict:
     """Runs the identity script in 'path', and parses the 'key=value' pairs
     into a data-structure ready for passing it on to the Mender server"""
     log.info("Aggregating the device identity attributes...")
@@ -28,7 +28,7 @@ def aggregate(path=""):
         if os.access(path, os.X_OK):
             identity_data = ScriptKeyValueAggregator(path).run()
         else:
-            log.error("The identity-script at {path} is not accessible")
+            log.error(f"The identity-script at {path} is not executable")
     else:
         log.error(f"{path} not found. No identity can be collected")
     log.debug(f"Aggregated identity data: {identity_data}")

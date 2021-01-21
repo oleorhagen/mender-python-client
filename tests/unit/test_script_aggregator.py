@@ -13,11 +13,13 @@
 #    limitations under the License.
 
 import os
+import logging as log
 import stat
 
 import pytest
 
 import mender.scripts.aggregator.aggregator as aggregator
+import mender.scripts.aggregator.identity as identity
 import mender.scripts.aggregator.inventory as inventory
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
@@ -154,3 +156,60 @@ class TestInventory:
             inventory.aggregate(tpath, device_type_path="", artifact_info_path="")
             == expected
         )
+
+
+class TestIdentityAggregator:
+    @pytest.fixture(autouse=True)
+    def set_log_level(self, caplog):
+        caplog.set_level(log.INFO)
+
+    @pytest.fixture
+    def file_create_fixture(self, tmpdir):
+        d = tmpdir.mkdir("inventoryaggregator")
+
+        def create_script(data):
+            f = d.join("script")
+            f.write(data)
+            os.chmod(f, stat.S_IRWXU | stat.S_IRWXO | stat.S_IRWXG)
+            return str(f)
+
+        return create_script
+
+    @pytest.mark.parametrize(
+        "data, expected",
+        [
+            (
+                """#! /bin/sh
+        echo mac=c8:5b:76:fb:c8:75
+    """,
+                {"mac": ["c8:5b:76:fb:c8:75"]},
+            ),
+            (
+                """#! /bin/sh
+                echo foo=bar
+                echo bar=baz""",
+                {"foo": ["bar"], "bar": ["baz"],},
+            ),
+        ],
+    )
+    def test_identity(self, data, expected, file_create_fixture):
+        tpath = file_create_fixture(data)
+        identity_data = identity.aggregate(tpath)
+        assert identity_data
+        assert identity_data == expected
+
+    def test_no_identity(self, caplog):
+        identity_data = identity.aggregate(path="/i/do/not/exist")
+        assert not identity_data
+        assert "No identity can be collected" in caplog.text
+
+    def test_identity_not_executable(self, caplog, tmpdir):
+        d = tmpdir.mkdir("identity-test")
+        f = d.join("mender-device-identity")
+        f.write(
+            """#! /bin/sh
+        echo mac=c8:5b:76:fb:c8:75"""
+        )
+        identity_data = identity.aggregate(path=f)
+        assert not identity_data
+        assert "is not executable" in caplog.text
