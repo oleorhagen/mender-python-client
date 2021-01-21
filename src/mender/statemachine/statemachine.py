@@ -82,13 +82,13 @@ class Init(State):
 ##########################################
 
 
-def run():
+def run(force_bootstrap=False):
     while os.path.exists(settings.PATHS.lockfile_path):
         log.info(
             "A deployment is currently in progress, the client will go to sleep for 60 seconds"
         )
         time.sleep(settings.SLEEP_INTERVAL)
-    StateMachine().run()
+    StateMachine().run(force_bootstrap=force_bootstrap)
 
 
 class StateMachine:

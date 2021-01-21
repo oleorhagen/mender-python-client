@@ -29,7 +29,7 @@ def run_daemon(args):
     if args.data:
         log.info(f"Data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
-    statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
+    statemachine.run(force_bootstrap=args.forcebootstrap)
 
 
 def show_artifact(_):
