@@ -39,6 +39,12 @@ class Context:
         self.private_key = None
 
 
+class StateMachine:
+
+    def run(self, context):
+        pass
+
+
 class State:
     def __init__(self):
         pass
@@ -47,7 +53,7 @@ class State:
         pass
 
 
-class Init(State):
+class Init:
     def run(self, context, force_bootstrap=False):
         log.debug("InitState: run()")
         context.config = config.Config({}, {})
@@ -88,21 +94,22 @@ def run(force_bootstrap=False):
             "A deployment is currently in progress, the client will go to sleep for 60 seconds"
         )
         time.sleep(settings.SLEEP_INTERVAL)
-    StateMachine().run(force_bootstrap=force_bootstrap)
+    m = Master(force_bootstrap)
+    m.run(m.context)
 
 
-class StateMachine:
-    def __init__(self):
+class Master(StateMachine):
+    def __init__(self, force_bootstrap=False):
         log.info("Initializing the state-machine")
-        self.context = Context()
+        context = Context()
+        self.context = Init().run(context, force_bootstrap=force_bootstrap)
         self.context.authorized = False
         log.info(f"ctx: {self.context}")
         self.unauthorized_machine = UnauthorizedStateMachine()
         self.authorized_machine = AuthorizedStateMachine()
         log.info("Finished setting up the state-machine")
 
-    def run(self, force_bootstrap=False):
-        self.context = Init().run(self.context, force_bootstrap)
+    def run(self, context):
         log.debug(f"Initialized context: {self.context}")
         deployment_log_handler = [
             handler
