@@ -166,7 +166,6 @@ def download(
     if not artifact_path:
         log.error("No path provided in which to store the Artifact")
         return False
-    log.info(f"Downloading Artifact: {artifact_path}")
     try:
         return download_and_resume(deployment_data, artifact_path, server_certificate)
     except DeploymentDownloadFailed as e:
