@@ -142,7 +142,7 @@ test:static:
     script:
         - mypy src
         - pylint --rcfile=.pylintrc-develop src
-        - pylint --rcfile=.pylintrc-develop --disable=no-self-use --disable=no-member --disable=too-many-ancestors tests/unit/test_*.py
+        - pylint --rcfile=.pylintrc-develop --disable=no-self-use --disable=no-member --disable=too-many-ancestors --disable=protected-access tests/unit/test_*.py
 
 test:unit:
     extends: .test
