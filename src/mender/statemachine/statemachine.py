@@ -100,7 +100,6 @@ class Master(StateMachine):
         context = Context()
         self.context = Init().run(context, force_bootstrap=force_bootstrap)
         self.context.authorized = False
-        log.info(f"ctx: {self.context}")
         self.unauthorized_machine = UnauthorizedStateMachine()
         self.authorized_machine = AuthorizedStateMachine()
         log.info("Finished setting up the state-machine")
