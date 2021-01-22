@@ -18,9 +18,10 @@ import sys
 import mender.bootstrap.bootstrap as bootstrap
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
-import mender.log.log as menderlog
 import mender.settings.settings as settings
 import mender.statemachine.statemachine as statemachine
+
+from mender.log.log import DeploymentLogHandler
 
 
 def run_daemon(args):
@@ -28,7 +29,7 @@ def run_daemon(args):
     if args.data:
         log.info(f"Data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
-    statemachine.StateMachine().run(force_bootstrap=args.forcebootstrap)
+    statemachine.run(force_bootstrap=args.forcebootstrap)
 
 
 def show_artifact(_):
@@ -94,13 +95,23 @@ def report(args):
             sys.exit(1)
     elif args.failure:
         log.info("Reporting a failed update to the Mender server")
+        update_handlers = [
+            handler
+            for handler in log.getLogger("").handlers
+            if isinstance(handler, DeploymentLogHandler)
+        ]
+        assert (
+            len(update_handlers) == 1
+        ), "Something is wrong with the setup of the DeploymentLogHandler"
+        deployment_log_handler = update_handlers[0]
+        deployment_log_handler.enable()
         if not deployments.report(
             context.config.ServerURL,
             deployments.STATUS_FAILURE,
             deployment_id,
             context.config.ServerCertificate,
             jwt,
-            menderlog.DeploymentLogHandler(),
+            deployment_log_handler,
         ):
             log.error("Failed to report the update status to the Mender server")
             sys.exit(1)
@@ -125,6 +136,7 @@ def setup_log(args):
     handlers.append(syslogger)
     if args.log_file:
         handlers.append(log.FileHandler(args.log_file))
+    handlers.append(DeploymentLogHandler())
     log.basicConfig(
         level=level,
         datefmt="%Y-%m-%d %H:%M:%S",
