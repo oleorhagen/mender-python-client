@@ -73,28 +73,38 @@ def request(
         return None
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
     parameters = {**device_type, **artifact_name}
-    r = requests.get(
-        server_url + "/api/devices/v1/deployments/device/deployments/next",
-        headers=headers,
-        params=parameters,
-        verify=server_certificate if server_certificate else True,
-    )
-    log.debug(f"update: request: {r}")
-    deployment_info = None
-    if r.status_code == 200:
-        log.info(f"New update available: {r.text}")
-        update_json = r.json()
-        deployment_info = DeploymentInfo(update_json)
-    elif r.status_code == 204:
-        log.info("No new update available")
-    elif r.status_code == 401:
-        log.info(f"The client seems to have been unathorized {r}")
-        raise HTTPUnathorized()
-    else:
-        log.error(f"Error {r.reason}. code: {r.status_code}")
-        log.debug(f"{r.json()}")
-        log.error("Error while fetching update")
-    return deployment_info
+    try:
+        r = requests.get(
+            server_url + "/api/devices/v1/deployments/device/deployments/next",
+            headers=headers,
+            params=parameters,
+            verify=server_certificate if server_certificate else True,
+        )
+        log.debug(f"update: request: {r}")
+        deployment_info = None
+        if r.status_code == 200:
+            log.info(f"New update available: {r.text}")
+            update_json = r.json()
+            deployment_info = DeploymentInfo(update_json)
+        elif r.status_code == 204:
+            log.info("No new update available")
+        elif r.status_code == 401:
+            log.info(f"The client seems to have been unathorized {r}")
+            raise HTTPUnathorized()
+        else:
+            log.error(f"Error {r.reason}. code: {r.status_code}")
+            log.debug(f"{r.json()}")
+            log.error("Error while fetching update")
+        return deployment_info
+    except (
+        requests.RequestException,
+        requests.ConnectionError,
+        requests.URLRequired,
+        requests.TooManyRedirects,
+        requests.Timeout,
+    ) as e:
+        log.error(e)
+        return None
 
 
 def get_exponential_backoff_time(tried: int, max_interval: int) -> int:
