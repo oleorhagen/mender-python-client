@@ -40,15 +40,11 @@ class Context:
 
 
 class StateMachine:
-
     def run(self, context):
         pass
 
 
 class State:
-    def __init__(self):
-        pass
-
     def run(self, context):
         pass
 
@@ -66,7 +62,7 @@ class Init:
         except config.NoConfigurationFileError:
             log.error(
                 "No configuration files found for the device."
-                "Most likely, the device will not be functional."
+                " Most likely, the device will not be functional."
             )
         identity_data = identity.aggregate(path=settings.PATHS.identity_scripts)
         context.identity_data = identity_data
@@ -108,6 +104,7 @@ class Master(StateMachine):
         self.unauthorized_machine = UnauthorizedStateMachine()
         self.authorized_machine = AuthorizedStateMachine()
         log.info("Finished setting up the state-machine")
+        self.quit = False
 
     def run(self, context):
         log.debug(f"Initialized context: {self.context}")
@@ -121,13 +118,13 @@ class Master(StateMachine):
         ), "Something is wrong with the setup of the DeploymentLogHandler"
         self.context.deployment_log_handler = deployment_log_handler[0]
         self.context.deployment_log_handler.disable()
-        while True:
+        while not self.quit:
             self.unauthorized_machine.run(self.context)
             self.authorized_machine.run(self.context)
 
 
 #
-# Hierarchical - Yes!
+# Hierarchical
 #
 # i.e., Authorized, and Unauthorized state-machine
 #
@@ -183,7 +180,7 @@ class AuthorizedStateMachine(StateMachine):
         while context.authorized:
             try:
                 self.idle_machine.run(context)  # Idle returns when an update is ready
-                UpdateStateMachine().run(
+                self.update_machine.run(
                     context
                 )  # Update machine runs when idle detects an update
             except HTTPUnathorized:
@@ -191,12 +188,9 @@ class AuthorizedStateMachine(StateMachine):
                 return
 
 
-# Should transitions always go through the external state-machine, to verify and
-# catch de-authorizations (?)
 #
 # Second layered machine (below Authorized)
 #
-# Idling - Or, just pushing inventory and identity data and looking for updates
 
 
 class SyncInventory(State):
@@ -246,12 +240,13 @@ class SyncUpdate(State):
 
 class IdleStateMachine(AuthorizedStateMachine):
     def __init__(self):
-        pass
+        self.sync_inventory = SyncInventory()
+        self.sync_update = SyncUpdate()
 
     def run(self, context):
         while context.authorized:
-            SyncInventory().run(context)
-            if SyncUpdate().run(context):
+            self.sync_inventory.run(context)
+            if self.sync_update.run(context):
                 # Update available
                 return
             timeutil.sleep(context.update_timer, context.inventory_timer)
@@ -295,28 +290,36 @@ class ArtifactInstall(State):
         return ArtifactFailure()
 
 
+class UnsupportedState(Exception):
+    pass
+
+
 class ArtifactReboot(State):
     def run(self, context):
         log.info("Running the ArtifactReboot state...")
-        return ArtifactCommit()
+        # return ArtifactCommit()
+        raise UnsupportedState("ArtifactReboot is unhandled by the API client")
 
 
 class ArtifactCommit(State):
     def run(self, context):
         log.info("Running the ArtifactCommit state...")
-        return ArtifactRollback()
+        # return ArtifactRollback()
+        raise UnsupportedState("ArtifactCommit is unhandled by the API client")
 
 
 class ArtifactRollback(State):
     def run(self, context):
         log.info("Running the ArtifactRollback state...")
-        return ArtifactRollbackReboot()
+        # return ArtifactRollbackReboot()
+        raise UnsupportedState("ArtifactRollback is unhandled by the API client")
 
 
 class ArtifactRollbackReboot(State):
     def run(self, context):
         log.info("Running the ArtifactRollbackReboot state...")
-        return ArtifactFailure()
+        # return ArtifactFailure()
+        raise UnsupportedState("ArtifactRollbackReboot is unhandled by the API client")
 
 
 class ArtifactFailure(State):
@@ -344,10 +347,11 @@ class _UpdateDone(State):
         return isinstance(other, _UpdateDone)
 
     def run(self, context):
-        assert False
+        raise Exception(
+            "_UpdateDone state should never run. It is simply a placeholder"
+        )
 
 
-# The update state-machine is the most advanced machine we need
 class UpdateStateMachine(AuthorizedStateMachine):
     def __init__(self):
         self.current_state = Download()
