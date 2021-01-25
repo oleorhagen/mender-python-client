@@ -19,7 +19,10 @@ import mender_integration.tests.conftest as cf
 cf.machine_name = "qemux86-64"
 
 from mender_integration.tests.common_setup import standard_setup_one_client_bootstrapped
-from mender_integration.tests.tests.common_update import update_image
+from mender_integration.tests.tests.common_update import (
+    update_image,
+    update_image_failed,
+)
 
 
 def test_update_successful(standard_setup_one_client_bootstrapped):
@@ -42,13 +45,19 @@ def test_update_successful(standard_setup_one_client_bootstrapped):
     )
 
 
-# def test_update_error():
-#     pass
+def test_update_error(standard_setup_one_client_bootstrapped):
+    """Test that the client behaves as expected upon failure.
 
+    This means that the deployment log from both the client itself, and the
+    sub-updater should be uploaded to the Mender server upon an error.
 
-# def test_deployment_logs():
-#     pass
+    """
 
-
-# def test_download_resume():
-#     pass
+    device = standard_setup_one_client_bootstrapped.device
+    update_image_failed(
+        standard_setup_one_client_bootstrapped.device,
+        standard_setup_one_client_bootstrapped.get_virtual_network_host_ip(),
+        install_image="broken_update.ext4",
+        expected_log_message="An update was seemingly in progress, and failed",
+        expected_number_of_reboots=1,
+    )
