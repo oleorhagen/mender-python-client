@@ -26,9 +26,6 @@ from mender.log.log import DeploymentLogHandler
 
 def run_daemon(args):
     log.info("Running daemon...")
-    if args.data:
-        log.info(f"Data store set to: {args.data}")
-        settings.PATHS = settings.Path(data_store=args.data)
     statemachine.run(force_bootstrap=args.forcebootstrap)
 
 
@@ -44,9 +41,6 @@ def show_artifact(_):
 
 def run_bootstrap(args):
     log.info("Bootstrapping...")
-    if args.data:
-        log.info(f"Custom data store set to: {args.data}")
-        settings.PATHS = settings.Path(data_store=args.data)
     bootstrap.now(
         private_key_path=settings.PATHS.key, force_bootstrap=args.forcebootstrap
     )
@@ -57,9 +51,6 @@ def run_version(_):
 
 
 def report(args):
-    if args.data:
-        log.info(f"Custom data store set to: {args.data}")
-        settings.PATHS = settings.Path(data_store=args.data)
     context = statemachine.Context()
     context = statemachine.Init().run(context)
     jwt = authorize.request(
@@ -141,8 +132,10 @@ def setup_log(args):
         level=level,
         datefmt="%Y-%m-%d %H:%M:%S",
         format="%(asctime)s %(levelname)-8s %(message)s",
-        handlers=handlers,
     )
+    root_logger = log.getLogger("")
+    for handler in handlers:
+        root_logger.addHandler(handler)
     log.info(f"Log level set to {args.log_level}")
 
 
@@ -226,6 +219,9 @@ def main():
     if args.version:
         run_version(args)
         return
+    if args.data:
+        log.info(f"Data store set to: {args.data}")
+        settings.PATHS = settings.Path(data_store=args.data)
     setup_log(args)
     if "func" not in vars(args):
         parser.print_usage()
