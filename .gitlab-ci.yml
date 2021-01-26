@@ -153,4 +153,8 @@ test:unit:
         - pip install --cache-dir=~/.cache/pip-test -r tests/unit/requirements.txt
         - pip install --cache-dir=~/.cache/pip-test -e .
     script:
-        - pytest --cov=src/mender tests/unit && coveralls
+        - pytest --junit-xml=report.xml --cov=src/mender tests/unit && coveralls
+    artifacts:
+        when: always
+        reports:
+            junit: report.xml
