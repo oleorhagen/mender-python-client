@@ -16,7 +16,6 @@ import logging as log
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 import mender.security.rsa as rsa
-import mender.settings.settings as settings
 
 
 def generate_key() -> RSAPrivateKeyWithSerialization:
@@ -30,14 +29,12 @@ def public_key(private_key: RSAPrivateKeyWithSerialization) -> str:
     return rsa.public_key(private_key)
 
 
-def store_key(
-    private_key: RSAPrivateKeyWithSerialization, path: str = settings.PATHS.key
-):
+def store_key(private_key: RSAPrivateKeyWithSerialization, path: str):
     log.info(f"Storing key to: {path}")
     rsa.store_key(private_key, path)
 
 
-def load_key(where: str = settings.PATHS.key_path) -> RSAPrivateKeyWithSerialization:
+def load_key(where: str) -> RSAPrivateKeyWithSerialization:
     log.info(f"Loading key from: {where}")
     return rsa.load_key(where)
 

@@ -127,13 +127,10 @@ def setup_log(args):
     handlers.append(syslogger)
     if args.log_file:
         handlers.append(log.FileHandler(args.log_file))
-    handlers.append(DeploymentLogHandler())
-    log.basicConfig(
-        level=level,
-        datefmt="%Y-%m-%d %H:%M:%S",
-        format="%(asctime)s %(levelname)-8s %(message)s",
-    )
+    deployment_log_handler = DeploymentLogHandler()
+    handlers.append(deployment_log_handler)
     root_logger = log.getLogger("")
+    root_logger.setLevel(level)
     for handler in handlers:
         root_logger.addHandler(handler)
     log.info(f"Log level set to {args.log_level}")
@@ -216,12 +213,18 @@ def main():
         "--version", "-v", help="print the version", default=False, action="store_true"
     )
     args = parser.parse_args()
+    log.basicConfig(
+        datefmt="%Y-%m-%d %H:%M:%S", format="%(asctime)s %(levelname)-8s %(message)s",
+    )
     if args.version:
         run_version(args)
         return
     if args.data:
         log.info(f"Data store set to: {args.data}")
         settings.PATHS = settings.Path(data_store=args.data)
+    else:
+        log.info("Data store set to: '/var/lib/mender'")
+        settings.PATHS = settings.Path()
     setup_log(args)
     if "func" not in vars(args):
         parser.print_usage()

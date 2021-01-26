@@ -57,12 +57,12 @@ class DeploymentLogHandler(logging.FileHandler):
 
     def enable(self, reset=False):
         self.enabled = True
-        filename = os.path.join(self.log_dir, "deployment.log")
         if reset:
             self._reset()
 
     def _reset(self):
         # Reset the log
+        filename = os.path.join(self.log_dir, "deployment.log")
         with open(filename, "w"):
             pass
 
