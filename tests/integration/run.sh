@@ -10,8 +10,8 @@ sed -e 's/DOWNLOAD_SPEED/#DOWNLOAD_SPEED/' -i mender_integration/docker-compose.
 sed -e 's/ALLOWED_HOSTS: .*/ALLOWED_HOSTS: ~./' -i mender_integration/docker-compose.testing.yml
 
 # Workaround bug in master
-sed -e 's/mender-master/mender-2.4.x/' -i mender_integration/docker-compose.yml
-sed -e 's/master/2.4.x/' -i mender_integration/docker-compose.yml
+sed -e 's/mender-master/latest/' -i mender_integration/docker-compose.yml
+sed -e 's/master/latest/' -i mender_integration/docker-compose.yml
 
 # Extract file system images from Docker images
 mkdir -p output
