@@ -19,6 +19,7 @@ docker run --rm --privileged --entrypoint /extract_fs -v $PWD/output:/output \
        mendersoftware/mender-client-qemu:${MENDER_VERSION}
 mv output/* .
 rmdir output
+dd if=/dev/urandom of=broken_update.ext4 bs=10M count=5
 cp core-image-full-cmdline-qemux86-64.ext4 mender_integration/tests
 
 python3 -m pytest -v "$@"
