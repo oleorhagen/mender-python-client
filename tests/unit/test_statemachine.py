@@ -223,7 +223,7 @@ class TestStateMachines:
 
         with monkeypatch.context() as m:
             m.setattr(statemachine, "Authorize", MockAuthorize)
-            assert not unauthorized_machine.run(ctx)
+            unauthorized_machine.run(ctx)
             assert ctx.JWT == "JWTTOKENTEXT"
 
     def test_authorized(self, ctx):
