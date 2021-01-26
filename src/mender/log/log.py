@@ -29,7 +29,7 @@ class JSONFormatter(logging.Formatter):
 
     {
     "message": "foobar",
-    "timestamp": "UTC-...",
+    "timestamp": "ISO-RFC3339 format",
     "level": "LEVEL"
     }
 
