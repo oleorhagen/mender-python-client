@@ -29,7 +29,7 @@ class JSONFormatter(logging.Formatter):
 
     {
     "message": "foobar",
-    "timestamp": "UTC-...",
+    "timestamp": "ISO-RFC3339 format",
     "level": "LEVEL"
     }
 
@@ -55,10 +55,14 @@ class DeploymentLogHandler(logging.FileHandler):
         if self.enabled:
             super().handle(record)
 
-    def enable(self):
+    def enable(self, reset=False):
         self.enabled = True
-        filename = os.path.join(self.log_dir, "deployment.log")
+        if reset:
+            self._reset()
+
+    def _reset(self):
         # Reset the log
+        filename = os.path.join(self.log_dir, "deployment.log")
         with open(filename, "w"):
             pass
 

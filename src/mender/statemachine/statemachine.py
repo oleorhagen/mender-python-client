@@ -232,7 +232,7 @@ class SyncUpdate(State):
         )
         if deployment:
             context.deployment = deployment
-            context.deployment_log_handler.enable()
+            context.deployment_log_handler.enable(reset=True)
             return True
         return False
 
