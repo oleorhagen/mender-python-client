@@ -146,7 +146,7 @@ class TestStates:
         with monkeypatch.context() as m:
             m.setattr(deployments, "download", lambda *args, **kwargs: None)
             assert isinstance(download_state.run(ctx), statemachine.ArtifactFailure)
-        # Failed download
+        # Successful download
         with monkeypatch.context() as m:
             m.setattr(
                 deployments, "download", lambda *args, **kwargs: {"some": "deployment"}
