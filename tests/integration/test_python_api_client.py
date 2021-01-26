@@ -12,6 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
+import time
 import pytest
 
 import mender_integration.tests.conftest as cf
@@ -61,3 +62,46 @@ def test_update_error(standard_setup_one_client_bootstrapped):
         expected_log_message="An update was seemingly in progress, and failed",
         expected_number_of_reboots=1,
     )
+
+
+from mender_integration.tests.MenderAPI import devauth, inv
+
+
+def extract_inventory():
+    """Get the device inventory"""
+    for _ in range(10):
+        inv_json = inv.get_devices()
+        assert len(inv_json) > 0
+        auth_json = devauth.get_devices()
+        auth_ids = [device["id"] for device in auth_json]
+        for device in inv_json:
+            assert device["id"] in auth_ids
+            attrs = device["attributes"]
+            attrs = [{"name": x.get("name"), "value": x.get("value")} for x in attrs]
+            if len(attrs) > 3:
+                return attrs
+            else:
+                time.sleep(20)
+                continue
+    return None
+
+
+def test_inventory(standard_setup_one_client_bootstrapped):
+    """
+    Test that device reports inventory after having bootstrapped and performed
+    a rootfs update.
+
+    After the update the inventory should differ.
+
+    """
+
+    inventory_pre_update = extract_inventory()
+    assert inventory_pre_update
+    update_image(
+        standard_setup_one_client_bootstrapped.device,
+        standard_setup_one_client_bootstrapped.get_virtual_network_host_ip(),
+        install_image="core-image-full-cmdline-%s.ext4" % "qemux86-64",
+    )
+    inventory_post_update = extract_inventory()
+    assert inventory_post_update
+    assert inventory_pre_update != inventory_post_update
