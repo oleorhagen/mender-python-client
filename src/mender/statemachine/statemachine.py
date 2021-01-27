@@ -212,7 +212,7 @@ class SyncInventory(State):
                 context.config.ServerCertificate,
                 method="PATCH",
             ):
-                log.debug("Falling back to to updating the inventory with PUT")
+                log.info("Falling back to to updating the inventory with PUT")
                 # Ignoring the returned error. It will only be logged
                 if not client_inventory.request(
                     context.config.ServerURL,
