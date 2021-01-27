@@ -120,7 +120,6 @@ def setup_log(args):
         "critical": log.CRITICAL,
     }.get(args.log_level, "info")
     handlers = []
-    handlers.append(log.StreamHandler())
     # TODO - setup this for the device, see:
     # https://docs.python.org/3/library/logging.handlers.html#sysloghandler
     syslogger = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
