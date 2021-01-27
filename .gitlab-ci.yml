@@ -107,6 +107,10 @@ test:integration:
   script:
     - cd tests/integration
     - ./run.sh test_python_api_client.py
+  artifacts:
+      when: always
+      reports:
+          junit: tests/integration/report.xml
 
 
 

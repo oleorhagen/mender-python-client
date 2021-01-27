@@ -22,4 +22,4 @@ rmdir output
 dd if=/dev/urandom of=broken_update.ext4 bs=10M count=5
 cp core-image-full-cmdline-qemux86-64.ext4 mender_integration/tests
 
-python3 -m pytest -v "$@"
+python3 -m pytest --junit-xml=report.xml -v "$@"
