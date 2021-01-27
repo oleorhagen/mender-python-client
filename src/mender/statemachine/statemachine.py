@@ -205,14 +205,28 @@ class SyncInventory(State):
         )
         if inventory_data:
             log.debug(f"aggregated inventory data: {inventory_data}")
-            client_inventory.request(
+            if not client_inventory.request(
                 context.config.ServerURL,
                 context.JWT,
                 inventory_data,
                 context.config.ServerCertificate,
-            )
+                method="PATCH",
+            ):
+                log.info("Falling back to to updating the inventory with PUT")
+                # Ignoring the returned error. It will only be logged
+                if not client_inventory.request(
+                    context.config.ServerURL,
+                    context.JWT,
+                    inventory_data,
+                    context.config.ServerCertificate,
+                    method="PUT",
+                ):
+                    log.error("Failed to submit the inventory")
+                    return None
         else:
             log.info("No inventory data found")
+            return None
+        log.info("Inventory submitted successfully")
 
 
 class SyncUpdate(State):

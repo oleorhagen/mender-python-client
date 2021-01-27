@@ -17,17 +17,21 @@ import requests
 
 
 def request(
-    server_url: str, JWT: str, inventory_data: dict, server_certificate: str
-) -> None:
+    server_url: str,
+    JWT: str,
+    inventory_data: dict,
+    server_certificate: str,
+    method: str,
+) -> bool:
     if not server_url:
         log.error("ServerURL not provided, unable to upload the inventory")
-        return None
+        return False
     if not JWT:
         log.error("No JWT not provided, unable to upload the inventory")
-        return None
+        return False
     if not inventory_data:
         log.info("No inventory_data provided")
-        return None
+        return False
     log.debug(
         f"inventory request: server_url: {server_url}\nJWT: {JWT}\ninventory_data: {inventory_data}"
     )
@@ -35,12 +39,21 @@ def request(
     log.debug(f"inventory headers: {headers}")
     raw_data = json.dumps([{"name": k, "value": v} for k, v in inventory_data.items()])
     try:
-        r = requests.put(
-            server_url + "/api/devices/v1/inventory/device/attributes",
-            headers=headers,
-            data=raw_data,
-            verify=server_certificate if server_certificate else True,
-        )
+        if method == "PATCH":
+            r = requests.patch(
+                server_url + "/api/devices/v1/inventory/device/attributes",
+                headers=headers,
+                data=raw_data,
+                verify=server_certificate if server_certificate else True,
+            )
+        else:
+            r = requests.put(
+                server_url + "/api/devices/v1/inventory/device/attributes",
+                headers=headers,
+                data=raw_data,
+                verify=server_certificate if server_certificate else True,
+            )
+
     except (
         requests.RequestException,
         requests.ConnectionError,
@@ -49,8 +62,9 @@ def request(
         requests.Timeout,
     ) as e:
         log.error(f"Failed to upload the inventory: {e}")
-        return None
+        return False
     log.debug(f"inventory response: {r}")
     if r.status_code != 200:
         log.error(f"Got inventory response: {r.json()}")
-    return None
+        return False
+    return True
