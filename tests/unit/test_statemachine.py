@@ -14,6 +14,7 @@
 import logging as log
 import os
 import os.path
+import sys
 import time
 
 import pytest
@@ -159,12 +160,19 @@ class TestStates:
             m.setattr(
                 installscriptrunner, "run_sub_updater", lambda *args, **kwargs: False
             )
-            assert isinstance(artifact_install.run(ctx), statemachine.ArtifactFailure)
+
+            def raise_exception():
+                raise Exception()
+
+            m.setattr(sys, "exit", lambda exit_code: raise_exception())
+            with pytest.raises(Exception):
+                artifact_install.run(ctx)
         with monkeypatch.context() as m:
             m.setattr(
                 installscriptrunner, "run_sub_updater", lambda *args, **kwargs: True
             )
-            assert isinstance(artifact_install.run(ctx), statemachine.ArtifactReboot)
+            m.setattr(sys, "exit", lambda exit_code: exit_code)
+            artifact_install.run(ctx)
 
     def test_unsupported_states(self, ctx):
         with pytest.raises(statemachine.UnsupportedState):
@@ -175,18 +183,8 @@ class TestStates:
             statemachine.ArtifactRollback().run(ctx)
         with pytest.raises(statemachine.UnsupportedState):
             statemachine.ArtifactRollbackReboot().run(ctx)
-
-    def test_artifact_failure(self, ctx, monkeypatch):
-        with monkeypatch.context() as m:
-            m.setattr(deployments, "report", lambda *args, **kwargs: False)
-            assert isinstance(
-                statemachine.ArtifactFailure().run(ctx), statemachine._UpdateDone
-            )
-        with monkeypatch.context() as m:
-            m.setattr(deployments, "report", lambda *args, **kwargs: True)
-            assert isinstance(
-                statemachine.ArtifactFailure().run(ctx), statemachine._UpdateDone
-            )
+        with pytest.raises(statemachine.UnsupportedState):
+            statemachine.ArtifactFailure().run(ctx)
 
 
 class TestStateMachines:

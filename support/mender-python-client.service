@@ -9,6 +9,7 @@ User=root
 Group=root
 ExecStart=/usr/bin/mender-python-client daemon
 Restart=on-failure
+KillMode=process
 
 [Install]
 WantedBy=multi-user.target

@@ -11,27 +11,33 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import subprocess
 import logging as log
+import os.path
+import subprocess
 
 import mender.settings.settings as settings
 
 
 def run_sub_updater(deployment_id: str) -> bool:
     """run_sub_updater runs the /usr/share/mender/install script"""
-    log.info("Running the sub-updater script at /usr/share/mender/install")
+    log.info(f"Running the sub-updater script at {settings.PATHS.install_script}")
+    if not os.path.exists(settings.PATHS.install_script):
+        log.error(f"No install script found at '{settings.PATHS.install_script}'")
+        return False
     try:
         # Store the deployment ID in the update lockfile
         with open(settings.PATHS.lockfile_path, "w") as f:
             f.write(deployment_id)
-        subprocess.run(
+        subprocess.Popen(
             [
-                "/usr/share/mender/install",
+                f"{settings.PATHS.install_script}",
                 settings.PATHS.artifact_download + "/artifact.mender",
             ],
-            check=True,
         )
         return True
-    except subprocess.CalledProcessError as e:
-        log.error(f"Failed to run the install script '/usr/share/mender/install' {e}")
+    except PermissionError as e:
+        log.error(
+            f"The install script '{settings.PATHS.install_script}' has the wrong permissions."
+        )
+        log.error(f"Error {e}")
     return False

@@ -13,6 +13,7 @@
 #    limitations under the License.
 import logging as log
 import os.path
+import sys
 import time
 
 import mender.bootstrap.bootstrap as bootstrap
@@ -299,8 +300,16 @@ class ArtifactInstall(State):
     def run(self, context):
         log.info("Running the ArtifactInstall state...")
         if installscriptrunner.run_sub_updater(context.deployment.ID):
-            return ArtifactReboot()
-        return ArtifactFailure()
+            log.info(
+                "The client has successfully spawned the install-script process. Exiting. Goodbye!"
+            )
+            sys.exit(0)
+            # return ArtifactReboot()
+        log.error(
+            "The daemon should never reach this point. Something is wrong with the setup of the client."
+        )
+        sys.exit(1)
+        # return ArtifactFailure()
 
 
 class UnsupportedState(Exception):
@@ -338,18 +347,8 @@ class ArtifactRollbackReboot(State):
 class ArtifactFailure(State):
     def run(self, context):
         log.info("Running the ArtifactFailure state...")
-        if not deployments.report(
-            context.config.ServerURL,
-            deployments.STATUS_FAILURE,
-            context.deployment.ID,
-            context.config.ServerCertificate,
-            context.JWT,
-            context.deployment_log_handler,
-        ):
-            log.error(
-                "Failed to report the deployment status 'failure' to the Mender server"
-            )
-        return _UpdateDone()
+        # return _UpdateDone()
+        raise UnsupportedState("ArtifactFailure is unhandled by the API client")
 
 
 class _UpdateDone(State):

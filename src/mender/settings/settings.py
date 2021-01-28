@@ -53,6 +53,8 @@ class Path:
 
         self.lockfile_path = self.data_store + "/update.lock"
 
+        self.install_script = "/usr/share/mender/install"
+
 
 # Global singleton
 PATHS = Path()
