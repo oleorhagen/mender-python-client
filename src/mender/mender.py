@@ -161,7 +161,8 @@ def main():
     )
     show_artifact_parser.set_defaults(func=show_artifact)
     report_parser = subcommand_parser.add_parser(
-        "report", help="Report the update status",
+        "report",
+        help="Report the update status. Note: an update must be in progress for this to work",
     )
     report_parser.set_defaults(func=report)
     report_parser.add_argument(
