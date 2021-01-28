@@ -49,7 +49,7 @@ class Config:
                 log.debug(f"TenantToken: {v}")
                 self.TenantToken = v
             elif k == "InventoryPollIntervalSeconds":
-                log.debug(f"InventoryPollInvervalSeconds: {v}")
+                log.debug(f"InventoryPollIntervalSeconds: {v}")
                 self.InventoryPollIntervalSeconds = v
             elif k == "UpdatePollIntervalSeconds":
                 log.debug(f"UpdatePollIntervalSeconds: {v}")
