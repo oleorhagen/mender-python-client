@@ -31,9 +31,10 @@ class TestScriptKeyValueAggregator:
             "key=value\nkey2=value2\nkey=value2",
             {"key": ["value", "value2"], "key2": ["value2"]},
         ),
-        ("key=value key=value", {}),
+        ("key=value key=value", {"key": ["value key=value"]}),
         ("key=value\nkey=val2\nkey=value", {"key": ["value", "val2", "value"]}),
-        ("key=val\tkey=val2", {}),
+        ("key=val\tkey=val2", {"key": ["val\tkey=val2"]}),
+        ("", {} ),
     ]
 
     @pytest.mark.parametrize("data, expected", TEST_DATA)

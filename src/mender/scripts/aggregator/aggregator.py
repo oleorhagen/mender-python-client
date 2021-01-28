@@ -55,15 +55,9 @@ class ScriptKeyValueAggregator:
         for line in data.split("\n"):
             if line == "":
                 continue
-            arr = line.strip().split("=")
+            arr = line.strip().split("=", 1)
             if len(arr) < 2:
                 log.debug("Skipping line without output")
-                continue
-            if len(arr) > 2:
-                log.error(
-                    f"script: {self.script_path} output line: {line}\
-                    is improperly formatted with more than one '=' sign. Skipping."
-                )
                 continue
             key, val = arr[0], arr[1]
             if unique_keys:
