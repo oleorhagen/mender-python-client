@@ -76,17 +76,18 @@ class Config:
 def load(local_path: str, global_path: str) -> Optional[Config]:
     """Read and return the merged configuration from the local and global config files"""
     log.info("Loading the configuration files...")
+    log.debug(f"global_path: {global_path}\nlocal_path: {local_path}")
     global_conf = local_conf = None
     try:
         with open(global_path, "r") as fh:
             global_conf = json.load(fh)
     except FileNotFoundError:
-        log.info("Global configuration file not found")
+        log.info(f"Global configuration file: '{global_path}' not found")
     try:
         with open(local_path, "r") as fh:
             local_conf = json.load(fh)
-    except FileNotFoundError as e:
-        log.info(f"Local configuration file not found: {e}")
+    except FileNotFoundError:
+        log.info(f"Local configuration file: '{local_path}' not found")
     if not global_conf and not local_conf:
         raise NoConfigurationFileError
     return Config(global_conf=global_conf or {}, local_conf=local_conf or {})

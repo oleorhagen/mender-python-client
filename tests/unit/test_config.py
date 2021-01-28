@@ -190,20 +190,20 @@ class TestFaultyJSONfile:
 class TestFileNotFound:
     @pytest.fixture(autouse=True)
     def set_log_level(self, caplog):
-        caplog.set_level(log.INFO)
+        caplog.set_level(log.DEBUG)
 
     def test_file_not_found_error_both(self, caplog):
         with pytest.raises(config.NoConfigurationFileError):
             config.load("", "")
-        assert "Global configuration file not found" in caplog.text
-        assert "Local configuration file not found" in caplog.text
+        assert "Global configuration file: '' not found" in caplog.text
+        assert "Local configuration file: '' not found" in caplog.text
 
     def test_file_not_found_error_local(self, caplog):
         config.load("tests/unit/data/configs/local_mender.conf", "")
-        assert "Global configuration file not found" in caplog.text
-        assert "Local configuration file not found" not in caplog.text
+        assert "Global configuration file: '' not found" in caplog.text
+        assert "Local configuration file: '' not found" not in caplog.text
 
     def test_file_not_found_error_(self, caplog):
         config.load("", "tests/unit/data/configs/global_mender.conf")
-        assert "Global configuration file not found" not in caplog.text
-        assert "Local configuration file not found" in caplog.text
+        assert "Global configuration file: '' not found" not in caplog.text
+        assert "Local configuration file: '' not found" in caplog.text
