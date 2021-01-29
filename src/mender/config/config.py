@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ class Config:
     RootfsPartA = ""
     RootfsPartB = ""
     TenantToken = ""
-    InventoryPollIntervalSeconds = ""
-    UpdatePollIntervalSeconds = ""
-    RetryPollIntervalSeconds = ""
+    InventoryPollIntervalSeconds = 5
+    UpdatePollIntervalSeconds = 5
+    RetryPollIntervalSeconds = 5
     ServerCertificate = ""
 
     def __init__(self, global_conf: dict, local_conf: dict):
@@ -49,13 +49,22 @@ class Config:
                 log.debug(f"TenantToken: {v}")
                 self.TenantToken = v
             elif k == "InventoryPollIntervalSeconds":
-                log.debug(f"InventoryPollInvervalSeconds: {v}")
+                log.debug(f"InventoryPollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "InventoryPollIntervalSeconds needs to be an integer"
                 self.InventoryPollIntervalSeconds = v
             elif k == "UpdatePollIntervalSeconds":
                 log.debug(f"UpdatePollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "UpdatePollIntervalSeconds needs to be an integer"
                 self.UpdatePollIntervalSeconds = v
             elif k == "RetryPollIntervalSeconds":
                 log.debug(f"RetryPollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "RetryPollIntervalSeconds needs to be an integer"
                 self.RetryPollIntervalSeconds = v
             elif k == "ServerCertificate":
                 log.debug(f"ServerCertificate: {v}")
@@ -67,17 +76,18 @@ class Config:
 def load(local_path: str, global_path: str) -> Optional[Config]:
     """Read and return the merged configuration from the local and global config files"""
     log.info("Loading the configuration files...")
+    log.debug(f"global_path: {global_path}\nlocal_path: {local_path}")
     global_conf = local_conf = None
     try:
         with open(global_path, "r") as fh:
             global_conf = json.load(fh)
     except FileNotFoundError:
-        log.info("Global configuration file not found")
+        log.info(f"Global configuration file: '{global_path}' not found")
     try:
         with open(local_path, "r") as fh:
             local_conf = json.load(fh)
-    except FileNotFoundError as e:
-        log.info(f"Local configuration file not found: {e}")
+    except FileNotFoundError:
+        log.info(f"Local configuration file: '{local_path}' not found")
     if not global_conf and not local_conf:
         raise NoConfigurationFileError
     return Config(global_conf=global_conf or {}, local_conf=local_conf or {})
