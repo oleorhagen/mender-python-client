@@ -152,6 +152,8 @@ test:unit:
     extends: .test
     stage: test
     image: python:3.6-buster
+    variables:
+        BRANCH_NAME: "${CI_COMMIT_REF_SLUG}"
     before_script:
         - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
         - pip install --cache-dir=~/.cache/pip-test -r tests/unit/requirements.txt
