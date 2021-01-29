@@ -211,16 +211,16 @@ class SyncInventory(State):
                 context.JWT,
                 inventory_data,
                 context.config.ServerCertificate,
-                method="PATCH",
+                method="PUT",
             ):
-                log.info("Falling back to to updating the inventory with PUT")
+                log.info("Falling back to to updating the inventory with PATCH")
                 # Ignoring the returned error. It will only be logged
                 if not client_inventory.request(
                     context.config.ServerURL,
                     context.JWT,
                     inventory_data,
                     context.config.ServerCertificate,
-                    method="PUT",
+                    method="PATCH",
                 ):
                     log.error("Failed to submit the inventory")
                     return None

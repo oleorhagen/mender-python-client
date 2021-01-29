@@ -120,8 +120,6 @@ def setup_log(args):
         "critical": log.CRITICAL,
     }.get(args.log_level, "info")
     handlers = []
-    # TODO - setup this for the device, see:
-    # https://docs.python.org/3/library/logging.handlers.html#sysloghandler
     syslogger = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
     handlers.append(syslogger)
     if args.log_file:
@@ -161,7 +159,8 @@ def main():
     )
     show_artifact_parser.set_defaults(func=show_artifact)
     report_parser = subcommand_parser.add_parser(
-        "report", help="Report the update status",
+        "report",
+        help="Report the update status. Note: an update must be in progress for this to work",
     )
     report_parser.set_defaults(func=report)
     report_parser.add_argument(
