@@ -8,9 +8,13 @@ mkdir -p yocto
 
 cd yocto
 
+rm -rf poky
 git clone -b ${YOCTO_BRANCH:-dunfell} https://github.com/mendersoftware/poky
+rm -rf meta-openembedded
 git clone -b ${YOCTO_BRANCH:-dunfell} https://github.com/openembedded/meta-openembedded.git
+rm -rf meta-mender
 git clone -b ${YOCTO_BRANCH:-dunfell} https://github.com/mendersoftware/meta-mender.git
+rm -rf meta-mender-python-client
 cp -r ${script_dir}/meta-mender-python-client .
 
 source poky/oe-init-build-env
