@@ -133,8 +133,8 @@ _OmbrDbLa4-bxl8GJjRNH86LX6UOxjgatxaZyKEZhDG-gK6_f57c7MiA0KglOGuA
 GNWAxI8A7jyOqKOvY3iemL9TvbKpoIP"""
         )
         assert global_only.InventoryPollIntervalSeconds == 200
-        assert global_only.UpdatePollIntervalSeconds == ""
-        assert global_only.RetryPollIntervalSeconds == ""
+        assert global_only.UpdatePollIntervalSeconds == 5
+        assert global_only.RetryPollIntervalSeconds == 5
         assert global_only.ServerCertificate == ""
 
 

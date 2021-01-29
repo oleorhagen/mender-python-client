@@ -50,12 +50,21 @@ class Config:
                 self.TenantToken = v
             elif k == "InventoryPollIntervalSeconds":
                 log.debug(f"InventoryPollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "InventoryPollIntervalSeconds needs to be an integer"
                 self.InventoryPollIntervalSeconds = v
             elif k == "UpdatePollIntervalSeconds":
                 log.debug(f"UpdatePollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "UpdatePollIntervalSeconds needs to be an integer"
                 self.UpdatePollIntervalSeconds = v
             elif k == "RetryPollIntervalSeconds":
                 log.debug(f"RetryPollIntervalSeconds: {v}")
+                assert isinstance(
+                    v, int
+                ), "RetryPollIntervalSeconds needs to be an integer"
                 self.RetryPollIntervalSeconds = v
             elif k == "ServerCertificate":
                 log.debug(f"ServerCertificate: {v}")
