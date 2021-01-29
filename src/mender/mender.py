@@ -34,6 +34,7 @@ def show_artifact(_):
     try:
         with open(settings.PATHS.artifact_info) as f:
             data = f.read()
+            log.info("Currently installed Artifact: ")
             log.info(data)
     except FileNotFoundError:
         log.error(f"No device_type file found in {settings.PATHS.data_store}")
@@ -82,7 +83,9 @@ def report(args):
             jwt,
             deployment_logger=None,
         ):
-            log.error("Failed to report the update status to the Mender server")
+            log.error(
+                "Failed to report the successful update status to the Mender server"
+            )
             sys.exit(1)
     elif args.failure:
         log.info("Reporting a failed update to the Mender server")
@@ -104,7 +107,7 @@ def report(args):
             jwt,
             deployment_log_handler,
         ):
-            log.error("Failed to report the update status to the Mender server")
+            log.error("Failed to report the failed update status to the Mender server")
             sys.exit(1)
     else:
         log.error("No report status given")
@@ -133,7 +136,7 @@ def setup_log(args):
     log.info(f"Log level set to {args.log_level}")
 
 
-def main():
+def main(testargs=None):
     parser = argparse.ArgumentParser(
         prog="mender",
         description="""mender
@@ -210,7 +213,7 @@ def main():
     global_options.add_argument(
         "--version", "-v", help="print the version", default=False, action="store_true"
     )
-    args = parser.parse_args()
+    args = parser.parse_args(testargs)
     log.basicConfig(
         datefmt="%Y-%m-%d %H:%M:%S", format="%(asctime)s %(levelname)-8s %(message)s",
     )
@@ -227,7 +230,8 @@ def main():
     if "func" not in vars(args):
         parser.print_usage()
         return
-    args.func(args)
+    if not testargs:
+        args.func(args)
 
 
 if __name__ == "__main__":
