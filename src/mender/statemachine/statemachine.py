@@ -172,15 +172,11 @@ class UnauthorizedStateMachine(StateMachine):
 class AuthorizedStateMachine(StateMachine):
     """Handle Inventory update, and update check"""
 
-    def __init__(self):
-        self.idle_machine = IdleStateMachine()
-        self.update_machine = UpdateStateMachine()
-
     def run(self, context):
         while context.authorized:
             try:
-                self.idle_machine.run(context)  # Idle returns when an update is ready
-                self.update_machine.run(
+                IdleStateMachine().run(context)  # Idle returns when an update is ready
+                UpdateStateMachine().run(
                     context
                 )  # Update machine runs when idle detects an update
             except HTTPUnathorized:
