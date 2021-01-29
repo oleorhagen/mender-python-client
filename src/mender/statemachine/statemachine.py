@@ -254,6 +254,7 @@ class SyncUpdate(State):
 
 class IdleStateMachine(AuthorizedStateMachine):
     def __init__(self):
+        super().__init__()
         self.sync_inventory = SyncInventory()
         self.sync_update = SyncUpdate()
 
@@ -366,6 +367,7 @@ class _UpdateDone(State):
 
 class UpdateStateMachine(AuthorizedStateMachine):
     def __init__(self):
+        super().__init__()
         self.current_state = Download()
 
     def run(self, context):
