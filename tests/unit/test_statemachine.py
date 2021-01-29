@@ -224,8 +224,9 @@ class TestStateMachines:
             unauthorized_machine.run(ctx)
             assert ctx.JWT == "JWTTOKENTEXT"
 
-    def test_authorized(self, ctx):
+    def test_authorized(self, ctx, monkeypatch):
         ctx.authorized = True
+        ctx.inventory_timer = timeutil.IsItTime
 
         class MockIdleStateMachine:
             def run(self, _):
@@ -235,11 +236,12 @@ class TestStateMachines:
             def run(self, _):
                 raise HTTPUnathorized()
 
-        authorized_machine = statemachine.AuthorizedStateMachine()
-        authorized_machine.idle_machine = MockIdleStateMachine()
-        authorized_machine.update_machine = MockUpdateStateMachine()
-        authorized_machine.run(ctx)
-        assert not ctx.authorized
+        with monkeypatch.context() as m:
+            authorized_machine = statemachine.AuthorizedStateMachine()
+            m.setattr(statemachine, "IdleStateMachine", MockIdleStateMachine)
+            m.setattr(statemachine, "UpdateStateMachine", MockUpdateStateMachine)
+            authorized_machine.run(ctx)
+            assert not ctx.authorized
 
     def test_idle(self, ctx):
         class MockSyncInventory:
