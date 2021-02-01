@@ -2,7 +2,7 @@
 
 # Run the original mender updater as a sub-updater to the mender-python-client
 #
-# This script is run by the API client through the symlink to /var/lib/mender/install
+# This script is run by the API client through the symlink to /usr/share/mender/install
 
 set -x
 

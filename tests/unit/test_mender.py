@@ -170,4 +170,7 @@ def test_run_main(caplog, capsys, tmpdir):
     main.main(["--data", str(d)])
     # Custom log-level
     main.main(["--data", str(d), "--log-level=debug"])
-    assert "Log level set to debug" in caplog.text
+    assert "Log level set to DEBUG" in caplog.text
+    # Non valid log-level
+    main.main(["--data", str(d), "--log-level=whatever"])
+    assert "Log level set to INFO" in caplog.text
