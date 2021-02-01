@@ -48,7 +48,7 @@ def run_bootstrap(args):
 
 
 def run_version(_):
-    print("version: alpha")
+    print("version: Beta")
 
 
 def report(args):
