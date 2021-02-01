@@ -37,6 +37,7 @@ class Config:
         log.debug("Mender configuration values:")
         for k, v in vals.items():
             if k == "ServerURL":
+                v = v.rstrip("/")
                 log.debug(f"ServerURL: {v}")
                 self.ServerURL = v
             elif k == "RootfsPartA":
