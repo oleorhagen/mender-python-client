@@ -122,7 +122,7 @@ def setup_log(args):
         "warning": log.WARNING,
         "error": log.ERROR,
         "critical": log.CRITICAL,
-    }.get(args.log_level, "info")
+    }.get(args.log_level, log.INFO)
     handlers = []
     syslogger = log.NullHandler() if args.no_syslog else log.handlers.SysLogHandler()
     handlers.append(syslogger)
@@ -134,7 +134,7 @@ def setup_log(args):
     root_logger.setLevel(level)
     for handler in handlers:
         root_logger.addHandler(handler)
-    log.info(f"Log level set to {args.log_level}")
+    log.info(f"Log level set to {log.getLevelName(level)}")
 
 
 def main(testargs=None):
