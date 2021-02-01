@@ -14,7 +14,7 @@
 import setuptools
 import re
 
-VERSIONFILE="src/mender/_version.py"
+VERSIONFILE = "src/mender/_version.py"
 version_string_line = open(VERSIONFILE, "rt").read()
 VSRE = r"^__version__ = ['\"]([^'\"]*)['\"]"
 match = re.search(VSRE, version_string_line, re.M)
