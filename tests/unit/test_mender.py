@@ -80,7 +80,7 @@ def test_run_bootstrap(args, monkeypatch):
 
 def test_run_version(capsys):
     main.run_version({})
-    assert "version: alpha" in capsys.readouterr().out
+    assert "version: 0.0.1" in capsys.readouterr().out
 
 
 def test_report(args, ctx, caplog, tmpdir, monkeypatch):

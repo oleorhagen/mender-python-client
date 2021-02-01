@@ -21,6 +21,7 @@ import mender.client.deployments as deployments
 import mender.settings.settings as settings
 import mender.statemachine.statemachine as statemachine
 
+from mender._version import __version__ as package_version
 from mender.log.log import DeploymentLogHandler
 
 
@@ -48,7 +49,7 @@ def run_bootstrap(args):
 
 
 def run_version(_):
-    print("version: alpha")
+    print(f"version: {package_version}")
 
 
 def report(args):
