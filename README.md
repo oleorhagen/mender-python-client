@@ -80,7 +80,28 @@ status back to the Mender server:
 * Success
 * Failure
 
-## Configuration
+### State-machine
+
+The _Mender Python Client_ can run as a daemon, with the _daemon_ command,
+however, only a subset of the states are supported, due to the handoff to the
+'install' script. The states supported are:
+
+* **Idle**: The Mender client idles and waits for the next action to handle. At this stage, no communication with the server, or downloads are in progress.
+* **Sync**: At this stage the Mender client will either send or update its inventory to the server, or check if an update is available. This requires communication with the server.
+* **Download**: When an update is ready at the server side Mender downloads it (streams it) to a designated file in `<datadir>/`.
+* **ArtifactInstall**: Calls the `sub-updater` to hand over the rest of the installation.
+
+The remaining functionality has to be supported by the `sub-updater`.
+
+In short, these are the responsibilities which the `sub-updater` has to handle:
+![State-machine](docs/mender-state-machine.png)
+
+And this is roughly equivalent to covering the following states in the original
+_mender-client_ state-machine:
+![State-machine](docs/mender-python-client-state-machine.png)
+
+
+### Configuration
 
 The _Mender Python Client_ has the same configuration setup as the original
 client, with a global and a local [configuration
