@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -87,5 +87,6 @@ def authorize(
         return r.text
     log.error("The client failed to authorize with the Mender server.")
     log.error(f"Error {r.reason}. code: {r.status_code}")
-    log.error(f"json: {r.json()}")
+    if r.status_code in (400, 401, 500):
+        log.error(f"Error: {r.json()}")
     return None
