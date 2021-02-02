@@ -18,19 +18,33 @@ sub-updater on the device has handled the update, reported the update status
 
 ## Workings
 
-The _client_ in daemon mode does periodic checks for updates at a configureable
+The _client_ in daemon mode does periodic checks for updates at a configurable
 interval, and downloads the Artifact for the deployment to a given location on
 the device. Then control is passed over to the _sub-updater_ through calling the
 script `/usr/share/mender/install <path-to-downloaded-artifact>`.
 
-It is then the responsibility of the _sub-updater_ to unpack the Artifact, and
-install it to the passive partition, reboot the device, commit the update (or
-roll back in case of errors, if so is required). Then report the update status
-through calling `mender-python-client report <--success|--failure>`, and then
-remove the lock-file, to have the _Mender Python Client_ start looking for
-updates again.
+This forks off a child-process, which then executes the install script. The
+_client_ itself, will then exit, since all its obligations are now fulfilled.
+If your script has been started, by say _systemd_, make sure that the
+sub-process is not killed upon exit. This can be done by adding:
 
-After a succesful update, the _sub-updater_ is responsible for updating the
+```
+...
+[service]
+...
+KillMode=process
+```
+
+to your unit file specification. For other init systems, keep this in mind.
+
+Following upon this, it is now the responsibility of the _sub-updater_ to unpack
+the Artifact, install it to the passive partition, reboot the device, and commit
+the update (or roll back in case of errors, if so is required). Then report the
+update status through calling `mender-python-client report
+<--success|--failure>`, and then remove the lock-file, to have the _Mender
+Python Client_ start looking for updates again.
+
+After a successful update, the _sub-updater_ is responsible for updating the
 _artifact_info_ file located in `/etc/mender/artifact_info`, to reflect the name
 of the Artifact just installed on the device. This is important, as this is the
 version reported to the _Mender Server_ when polling the server for further
@@ -45,6 +59,26 @@ The `device_type` is taken from `<datadir>/device_type` file, and has to have th
 ```
 device_type=<some-device-type>
 ```
+
+## Known limitations
+
+The _Mender Python Client_ is not a fully fledged _Mender Client_ updater, like
+the original [_Mender Client_](https://github.com/mendersoftware/mender). As
+such, there are certain limitations to keep in mind, when incorporating it into
+your device setup.
+
+For one, the _Mender Python Client_ holds no responsibility over either the
+reliability of the downloaded _Mender Artifact_, nor does it concern itself with
+anything which happens after the Artifact is downloaded, and the _install
+script_ has been spawned. All of this has to be managed by the sub-updater. This
+includes starting the daemon back up after it has exited.
+
+Secondly, the _Mender Python Client_ currently only reports the following deployment
+status back to the Mender server:
+
+* Downloading
+* Success
+* Failure
 
 ## Configuration
 
@@ -65,6 +99,7 @@ supported by the original _Mender Client_:
 * [InventoryPollIntervalSeconds](https://docs.mender.io/client-installation/configuration-file/configuration-options#inventorypollintervalseconds)
 * [UpdatePollIntervalSeconds](https://docs.mender.io/client-installation/configuration-file/configuration-options#updatepollintervalseconds)
 * [RetryPollIntervalSeconds](https://docs.mender.io/client-installation/configuration-file/configuration-options#retrypollintervalseconds)
+
 
 ## Contributing
 
@@ -91,7 +126,7 @@ issue. We thank you in advance for your cooperation.
 * Join the [Mender Hub discussion forum](https://hub.mender.io)
 * Follow us on [Twitter](https://twitter.com/mender_io). Please
   feel free to tweet us questions.
-* Fork us on [Github](https://github.com/mendersoftware)
+* Fork us on [GitHub](https://github.com/mendersoftware)
 * Create an issue in the [bugtracker](https://tracker.mender.io/projects/MEN)
 * Email us at [contact@mender.io](mailto:contact@mender.io)
 * Connect to the [#mender IRC channel on Freenode](http://webchat.freenode.net/?channels=mender)
