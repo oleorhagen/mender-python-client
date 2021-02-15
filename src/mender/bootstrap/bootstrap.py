@@ -12,7 +12,7 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import logging as log
+import logging
 import os.path
 from typing import Optional
 
@@ -20,6 +20,8 @@ from cryptography.exceptions import UnsupportedAlgorithm
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 import mender.security.key as key
+
+log = logging.getLogger(__name__)
 
 
 def now(

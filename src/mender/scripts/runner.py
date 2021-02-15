@@ -11,11 +11,13 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import logging as log
+import logging
 import os.path
 import subprocess
 
 import mender.settings.settings as settings
+
+log = logging.getLogger(__name__)
 
 
 def run_sub_updater(deployment_id: str) -> bool:

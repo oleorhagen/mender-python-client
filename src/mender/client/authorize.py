@@ -12,13 +12,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import json
-import logging as log
+import logging
 from typing import Optional
 
 import requests
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 import mender.security.key as key
+
+log = logging.getLogger(__name__)
+
 
 JWTToken = str
 

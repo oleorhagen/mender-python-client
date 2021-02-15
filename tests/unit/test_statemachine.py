@@ -11,7 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import logging as log
+import logging
 import os
 import os.path
 import sys
@@ -22,6 +22,7 @@ import pytest
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
 import mender.config.config as config
+import mender.log.menderlogger as menderlogger
 import mender.scripts.aggregator.identity as identity
 import mender.scripts.aggregator.inventory as inventory
 import mender.scripts.artifactinfo as artifactinfo
@@ -56,9 +57,20 @@ def fixture_ctx():
 
 class TestStates:
     @pytest.fixture(autouse=True)
+    def setup_mender_logger(self):
+        """Set the mender logger and deployment handler"""
+
+        class Args:
+            log_file = False
+            log_level = "debug"
+            no_syslog = False
+
+        menderlogger.setup(Args())
+
+    @pytest.fixture(autouse=True)
     def set_log_level_info(self, caplog):
         """Set the log-level capture to info for all tests"""
-        caplog.set_level(log.DEBUG)
+        caplog.set_level(logging.DEBUG)
 
     def test_init(self, monkeypatch, caplog):
         with monkeypatch.context() as m:
@@ -186,6 +198,17 @@ class TestStates:
 
 
 class TestStateMachines:
+    @pytest.fixture(autouse=True)
+    def setup_mender_logger(self):
+        """Set the mender logger and deployment handler"""
+
+        class Args:
+            log_file = False
+            log_level = "debug"
+            no_syslog = False
+
+        menderlogger.setup(Args())
+
     def test_master_init(self):
         m = statemachine.Master(force_bootstrap=False)
         assert m.context
@@ -193,22 +216,11 @@ class TestStateMachines:
         assert isinstance(m.unauthorized_machine, statemachine.UnauthorizedStateMachine)
         assert isinstance(m.authorized_machine, statemachine.AuthorizedStateMachine)
 
-    def test_master(self, ctx, monkeypatch):
+    def test_master(self, ctx):
         master = statemachine.Master(force_bootstrap=False)
-        with pytest.raises(AssertionError):
-            master.run(ctx)
-        with monkeypatch.context() as m:
-
-            class MockLogger:
-                handlers = [DeploymentLogHandler()]
-
-            def mock_get_logger(_):
-                return MockLogger()
-
-            m.setattr(log, "getLogger", mock_get_logger)
-            # Do not run the infinite loop
-            master.quit = True
-            master.run(ctx)
+        # Do not run the infinite loop
+        master.quit = True
+        master.run(ctx)
 
     def test_unathorized(self, ctx, monkeypatch):
         unauthorized_machine = statemachine.UnauthorizedStateMachine()
