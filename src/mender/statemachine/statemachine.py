@@ -17,8 +17,6 @@ import sys
 import time
 
 import mender.bootstrap.bootstrap as bootstrap
-from mender.client import HTTPUnathorized
-from mender.util import timeutil
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
@@ -29,8 +27,9 @@ import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
 import mender.scripts.runner as installscriptrunner
 import mender.settings.settings as settings
-
+from mender.client import HTTPUnathorized
 from mender.log.log import DeploymentLogHandler
+from mender.util import timeutil
 
 
 class Context:
@@ -38,6 +37,8 @@ class Context:
 
     def __init__(self):
         self.private_key = None
+        self.config = config.Config({}, {})
+        self.identity_data = {}
 
 
 class StateMachine:
@@ -53,7 +54,6 @@ class State:
 class Init:
     def run(self, context, force_bootstrap=False):
         log.debug("InitState: run()")
-        context.config = config.Config({}, {})
         try:
             context.config = config.load(
                 local_path=settings.PATHS.local_conf,
