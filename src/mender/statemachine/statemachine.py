@@ -38,6 +38,8 @@ class Context:
 
     def __init__(self):
         self.private_key = None
+        self.config = config.Config({}, {})
+        self.identity_data = {}
 
 
 class StateMachine:
@@ -53,7 +55,6 @@ class State:
 class Init:
     def run(self, context, force_bootstrap=False):
         log.debug("InitState: run()")
-        context.config = config.Config({}, {})
         try:
             context.config = config.load(
                 local_path=settings.PATHS.local_conf,
