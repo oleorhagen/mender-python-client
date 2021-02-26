@@ -16,6 +16,15 @@ deployment to a specified location on the device, and then exit until a local
 sub-updater on the device has handled the update, reported the update status
 (failed, or success), and re-started the _Mender Python Client_ thereafter.
 
+!! NOTE: The Mender Python Client is not a fully featured, or supported client
+!! implementation. This means that new Mender features are not expected to land
+!! in the Python implementation, even though they are available in the
+!! mainstream Go implementation of the client. This means that as long as possible
+!! it is _highly recommended_ to use the Golang version of the Mender client. The
+!! Python version should only be used if compiling the Mender client for you
+!! architecture is impossible.
+
+
 ## Workings
 
 The _client_ in daemon mode does periodic checks for updates at a configurable
