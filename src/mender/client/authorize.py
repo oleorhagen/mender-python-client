@@ -69,7 +69,7 @@ def authorize(
             server_url + "/api/devices/v1/authentication/auth_requests",
             data=raw_data,
             headers=headers,
-            verify=server_certificate if server_certificate else True,
+            verify=server_certificate or True,
         )
     except (
         requests.RequestException,
