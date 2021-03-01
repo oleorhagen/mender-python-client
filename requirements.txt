@@ -10,7 +10,7 @@ pluggy==0.13.1
 py==1.10.0
 pycparser==2.20
 pyparsing==2.4.7
-requests==2.25.0
+requests==2.25.1
 six==1.15.0
 toml==0.10.2
 urllib3==1.26.3
