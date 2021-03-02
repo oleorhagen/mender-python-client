@@ -44,14 +44,14 @@ def request(
                 server_url + "/api/devices/v1/inventory/device/attributes",
                 headers=headers,
                 data=raw_data,
-                verify=server_certificate if server_certificate else True,
+                verify=server_certificate or True,
             )
         else:
             r = requests.put(
                 server_url + "/api/devices/v1/inventory/device/attributes",
                 headers=headers,
                 data=raw_data,
-                verify=server_certificate if server_certificate else True,
+                verify=server_certificate or True,
             )
 
     except (
