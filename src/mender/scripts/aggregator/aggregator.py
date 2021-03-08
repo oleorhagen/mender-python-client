@@ -13,7 +13,6 @@
 #    limitations under the License.
 import logging as log
 import subprocess
-
 from typing import Dict, List
 
 

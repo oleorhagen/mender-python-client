@@ -12,12 +12,11 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import os
 import hashlib
-
-import requests
+import os
 
 import pytest
+import requests
 from werkzeug.wrappers import Response
 
 import mender.client.deployments as deployments

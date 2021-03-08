@@ -14,6 +14,7 @@
 import json
 import logging as testlogger
 import os.path
+
 import pytest
 
 import mender.log.log as mlog

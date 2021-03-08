@@ -138,12 +138,15 @@ test:static:
     stage: test
     image: python:3.6-buster
     before_script:
+        - pip install --cache-dir=~/.cache/pip-test isort
         - pip install --cache-dir=~/.cache/pip-test mypy
         - pip install --cache-dir=~/.cache/pip-test pylint
         - pip install --cache-dir=~/.cache/pip-test .
         - pip install --cache-dir=~/.cache/pip-test -r requirements.txt
         - pip install --cache-dir=~/.cache/pip-test -r tests/unit/requirements.txt
     script:
+        - isort --check-only --line-length 88 --wrap-length 88 src
+        - isort --check-only --line-length 88 --wrap-length 88 tests/unit/test_*.py
         - mypy src
         - pylint --rcfile=.pylintrc-develop src
         - pylint --rcfile=.pylintrc-develop --disable=no-self-use --disable=no-member --disable=too-many-ancestors --disable=protected-access --disable=too-many-statements --disable=too-many-arguments tests/unit/test_*.py
