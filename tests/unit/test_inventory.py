@@ -13,6 +13,7 @@
 #    limitations under the License.
 
 import logging as log
+
 import pytest
 
 import mender.client.inventory as inventory

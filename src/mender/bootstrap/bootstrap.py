@@ -16,8 +16,8 @@ import logging as log
 import os.path
 from typing import Optional
 
-from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 from cryptography.exceptions import UnsupportedAlgorithm
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 import mender.security.key as key
 

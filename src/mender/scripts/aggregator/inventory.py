@@ -1,4 +1,4 @@
-# Copyright 2020 Northern.tech AS
+# Copyright 2021 Northern.tech AS
 #
 #    Licensed under the Apache License, Version 2.0 (the "License");
 #    you may not use this file except in compliance with the License.
@@ -17,9 +17,9 @@ import os
 import os.path as path
 from typing import List
 
-from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
+from mender.scripts.aggregator.aggregator import ScriptKeyValueAggregator
 
 
 def aggregate(script_path: str, device_type_path: str, artifact_info_path: str) -> dict:

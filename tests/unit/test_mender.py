@@ -17,14 +17,12 @@ import os
 
 import pytest
 
-import mender.mender as main
-
 import mender.bootstrap.bootstrap as bootstrap
 import mender.client.authorize as authorize
 import mender.client.deployments as deployments
+import mender.mender as main
 import mender.settings.settings as settings
 import mender.statemachine.statemachine as statemachine
-
 from mender.log.log import DeploymentLogHandler
 
 

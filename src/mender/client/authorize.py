@@ -14,8 +14,8 @@
 import json
 import logging as log
 from typing import Optional
-import requests
 
+import requests
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKeyWithSerialization
 
 import mender.security.key as key

@@ -19,8 +19,6 @@ import time
 
 import pytest
 
-from mender.client import HTTPUnathorized
-from mender.util import timeutil
 import mender.client.deployments as deployments
 import mender.client.inventory as client_inventory
 import mender.config.config as config
@@ -30,10 +28,10 @@ import mender.scripts.artifactinfo as artifactinfo
 import mender.scripts.devicetype as devicetype
 import mender.scripts.runner as installscriptrunner
 import mender.settings.settings as settings
-
-from mender.log.log import DeploymentLogHandler
-
 import mender.statemachine.statemachine as statemachine
+from mender.client import HTTPUnathorized
+from mender.log.log import DeploymentLogHandler
+from mender.util import timeutil
 
 
 @pytest.fixture(name="ctx")

@@ -12,16 +12,15 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 import logging as log
-from typing import Optional
-from typing import Dict
 import os.path
-import time
 import re
+import time
+from typing import Dict, Optional
 
 import requests
 
-import mender.settings.settings as settings
 import mender.log.log as menderlog
+import mender.settings.settings as settings
 from mender.client import HTTPUnathorized
 
 STATUS_SUCCESS = "success"

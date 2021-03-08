@@ -13,10 +13,11 @@
 #    limitations under the License.
 
 import logging as log
+
 import pytest
 
-import mender.security.key as key
 import mender.client.authorize as authorize
+import mender.security.key as key
 
 
 @pytest.fixture(name="server_url")
