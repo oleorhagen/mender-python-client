@@ -11,7 +11,7 @@
 #    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
-import logging as log
+import logging
 import os.path
 import sys
 import time
@@ -28,8 +28,9 @@ import mender.scripts.devicetype as devicetype
 import mender.scripts.runner as installscriptrunner
 import mender.settings.settings as settings
 from mender.client import HTTPUnathorized
-from mender.log.log import DeploymentLogHandler
 from mender.util import timeutil
+
+log = logging.getLogger(__name__)
 
 
 class Context:
@@ -108,16 +109,7 @@ class Master(StateMachine):
 
     def run(self, context):
         log.debug(f"Initialized context: {self.context}")
-        deployment_log_handler = [
-            handler
-            for handler in log.getLogger("").handlers
-            if isinstance(handler, DeploymentLogHandler)
-        ]
-        assert (
-            len(deployment_log_handler) == 1
-        ), "Something is wrong with the setup of the DeploymentLogHandler"
-        self.context.deployment_log_handler = deployment_log_handler[0]
-        self.context.deployment_log_handler.disable()
+        log.parent.deployment_log_handler.disable()
         while not self.quit:
             self.unauthorized_machine.run(self.context)
             self.authorized_machine.run(self.context)
@@ -243,7 +235,7 @@ class SyncUpdate(State):
         )
         if deployment:
             context.deployment = deployment
-            context.deployment_log_handler.enable(reset=True)
+            log.parent.deployment_log_handler.enable(reset=True)
             return True
         return False
 
