@@ -16,6 +16,8 @@ import logging
 
 import requests
 
+from mender.client.http_requests import MenderRequestsException, http_request
+
 log = logging.getLogger(__name__)
 
 
@@ -42,28 +44,16 @@ def request(
     log.debug(f"inventory headers: {headers}")
     raw_data = json.dumps([{"name": k, "value": v} for k, v in inventory_data.items()])
     try:
-        if method == "PATCH":
-            r = requests.patch(
-                server_url + "/api/devices/v1/inventory/device/attributes",
-                headers=headers,
-                data=raw_data,
-                verify=server_certificate or True,
-            )
-        else:
-            r = requests.put(
-                server_url + "/api/devices/v1/inventory/device/attributes",
-                headers=headers,
-                data=raw_data,
-                verify=server_certificate or True,
-            )
+        request_method = requests.patch if method == "PATCH" else requests.put
+        r = http_request(
+            request_method,
+            server_url + "/api/devices/v1/inventory/device/attributes",
+            headers=headers,
+            data=raw_data,
+            verify=server_certificate or True,
+        )
 
-    except (
-        requests.RequestException,
-        requests.ConnectionError,
-        requests.URLRequired,
-        requests.TooManyRedirects,
-        requests.Timeout,
-    ) as e:
+    except MenderRequestsException as e:
         log.error(f"Failed to upload the inventory: {e}")
         return False
     log.debug(f"inventory response: {r}")

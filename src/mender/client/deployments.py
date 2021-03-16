@@ -22,6 +22,7 @@ import requests
 import mender.log.log as menderlog
 import mender.settings.settings as settings
 from mender.client import HTTPUnathorized
+from mender.client.http_requests import MenderRequestsException, http_request
 
 log = logging.getLogger(__name__)
 
@@ -76,7 +77,8 @@ def request(
     headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
     parameters = {**device_type, **artifact_name}
     try:
-        r = requests.get(
+        r = http_request(
+            requests.get,
             server_url + "/api/devices/v1/deployments/device/deployments/next",
             headers=headers,
             params=parameters,
@@ -99,13 +101,7 @@ def request(
             if r.status_code in (400, 404, 500):
                 log.debug(f"Error: {r.json()}")
         return deployment_info
-    except (
-        requests.RequestException,
-        requests.ConnectionError,
-        requests.URLRequired,
-        requests.TooManyRedirects,
-        requests.Timeout,
-    ) as e:
+    except MenderRequestsException as e:
         log.error(e)
         return None
 
@@ -210,7 +206,8 @@ def download_and_resume(
             if content_length:
                 req_headers["Range"] = f"bytes={offset}-"
                 log.debug(f"Request with headers {req_headers}")
-            with requests.get(
+            with http_request(
+                requests.get,
                 update_url,
                 headers=req_headers,
                 stream=True,
@@ -238,13 +235,7 @@ def download_and_resume(
                 log.debug(f"Got EOF. Wrote {offset} bytes. Total is {content_length}.")
                 if offset >= content_length:
                     return True
-        except (
-            requests.RequestException,
-            requests.ConnectionError,
-            requests.URLRequired,
-            requests.TooManyRedirects,
-            requests.Timeout,
-        ) as e:
+        except MenderRequestsException as e:
             log.error(e)
             log.debug(f"Got Error. Wrote {offset} bytes. Total is {content_length}.")
 
@@ -272,7 +263,8 @@ def report(
         return False
     try:
         headers = {"Content-Type": "application/json", "Authorization": "Bearer " + JWT}
-        response = requests.put(
+        response = http_request(
+            requests.put,
             server_url
             + "/api/devices/v1/deployments/device/deployments/"
             + deployment_id
@@ -297,7 +289,8 @@ def report(
                 log.error("No deployment log handler given")
                 return True
 
-            response = requests.put(
+            response = http_request(
+                requests.put,
                 server_url
                 + "/api/devices/v1/deployments/device/deployments/"
                 + deployment_id
@@ -312,13 +305,7 @@ def report(
                     error: {response.status_code}: {response.reason} {response.text}"
                 )
                 return False
-    except (
-        requests.RequestException,
-        requests.ConnectionError,
-        requests.URLRequired,
-        requests.TooManyRedirects,
-        requests.Timeout,
-    ) as e:
+    except MenderRequestsException as e:
         log.error(e)
         return False
     return True
